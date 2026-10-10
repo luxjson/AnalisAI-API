@@ -1,7 +1,7 @@
 require("dotenv").config();
 const crypto = require("crypto");
 const production = process.env.NODE_ENV === "production";
-const origin = process.env.APP_ORIGIN || "http://localhost:5173";
+const origin = process.env.APP_ORIGIN || "https://analisai-express.onrender.com";
 const parsed = new URL(origin);
 if (parsed.origin !== origin || (production && parsed.protocol !== "https:"))
   throw new Error(
