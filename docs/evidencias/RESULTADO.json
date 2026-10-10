@@ -6,8 +6,8 @@
     "failed": 0
   },
   "siteTests": {
-    "total": 51,
-    "passed": 51,
+    "total": 52,
+    "passed": 52,
     "failed": 0
   },
   "nativePagesRendered": 25,
@@ -168,7 +168,7 @@
     "productionDatabaseWrites": false,
     "browserPixelComparison": false
   },
-  "fullSkeletons": {
+  "historicalMaskedSkeletons": {
     "date": "2026-10-10",
     "siteTestsPassed": 51,
     "siteTestsFailed": 0,
@@ -194,5 +194,39 @@
       "CSS novo só afeta elementos marcados enquanto carregam.",
       "Comparação de pixels não executada: Chromium não iniciou neste ambiente."
     ]
+  },
+  "referenceSkeletons": {
+    "date": "2026-10-10",
+    "implementation": "dedicated-empty-blocks",
+    "reference": "Deadsmile-Games-Website(2).zip: src/components/ui/Skeleton.jsx + src/styles/global.css",
+    "pages": 25,
+    "sidebars": [
+      "public",
+      "aluno",
+      "professor"
+    ],
+    "siteTestsPassed": 52,
+    "siteTestsFailed": 0,
+    "buildPassed": true,
+    "loadedMarkupUnchangedPages": 25,
+    "originalCssFilesUnchanged": 28,
+    "apiRuntimeFilesUnchanged": 54,
+    "lastApiTestsPassed": 42,
+    "gradient": "linear-gradient(100deg, #242424 20%, #333 45%, #242424 70%)",
+    "backgroundSize": "220% 100%",
+    "animation": "1.8s ease-in-out infinite",
+    "lineHeight": 16,
+    "lineGap": 12,
+    "lastLineWidth": "65%",
+    "defaultRadius": 10,
+    "lineRadius": 6,
+    "blurUsed": false,
+    "hiddenTextUsedForShapes": false,
+    "pixelComparisonPerformed": false,
+    "pixelComparisonLimitation": "Chromium encerrou com SIGSEGV",
+    "formatCheck": {
+      "checked": 96,
+      "bad": []
+    }
   }
 }
