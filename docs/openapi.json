@@ -1,0 +1,4451 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AnalisAI REST API",
+    "version": "2.0.0",
+    "description": "Catálogo das rotas reais. Consulte API.md e os casos de uso para campos específicos não detalhados neste catálogo."
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "sessionCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "__Host-analisai.sid",
+        "description": "Em desenvolvimento: analisai.sid. Não é Bearer/JWT; login por sessão."
+      }
+    }
+  },
+  "paths": {
+    "/auth/logout": {
+      "post": {
+        "operationId": "authController_logout_post",
+        "summary": "authController.logout",
+        "tags": ["auth"],
+        "description": "Acesso: Público. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/professores/painel": {
+      "get": {
+        "operationId": "professorController_dashboard_get",
+        "summary": "professorController.dashboard",
+        "tags": ["professores"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/professores/ia": {
+      "get": {
+        "operationId": "aiController_teacherPage_get",
+        "summary": "aiController.teacherPage",
+        "tags": ["professores"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/alunos": {
+      "get": {
+        "operationId": "professorController_editAlunos_get",
+        "summary": "professorController.editAlunos",
+        "tags": ["alunos"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      },
+      "post": {
+        "operationId": "professorController_addAluno_post",
+        "summary": "professorController.addAluno",
+        "tags": ["alunos"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "ano_escolar": {
+                    "type": "string",
+                    "enum": [
+                      "1º MÉDIO",
+                      "2º MÉDIO",
+                      "3º MÉDIO",
+                      "9º FUNDAMENTAL"
+                    ]
+                  },
+                  "idade": {
+                    "type": "integer"
+                  },
+                  "presenca": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/professores/estatisticas": {
+      "get": {
+        "operationId": "professorController_graficos_get",
+        "summary": "professorController.graficos",
+        "tags": ["professores"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/equipe": {
+      "get": {
+        "operationId": "professorController_equipe_get",
+        "summary": "professorController.equipe",
+        "tags": ["equipe"],
+        "description": "Acesso: Público. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/professores/senha": {
+      "patch": {
+        "operationId": "professorController_alterarSenha_patch",
+        "summary": "professorController.alterarSenha",
+        "tags": ["professores"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "senha_atual": {
+                    "type": "string"
+                  },
+                  "nova_senha": {
+                    "type": "string",
+                    "minLength": 12,
+                    "maxLength": 128
+                  },
+                  "confirmar_senha": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/avaliacoes": {
+      "post": {
+        "operationId": "professorController_adicionarCompetencia_post",
+        "summary": "professorController.adicionarCompetencia",
+        "tags": ["avaliacoes"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alunos/presenca": {
+      "patch": {
+        "operationId": "professorController_atualizarPresenca_patch",
+        "summary": "professorController.atualizarPresenca",
+        "tags": ["alunos"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/dados-pedagogicos": {
+      "delete": {
+        "operationId": "professorController_eraseAll_delete",
+        "summary": "professorController.eraseAll",
+        "tags": ["admin"],
+        "description": "Acesso: Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alunos/importacoes": {
+      "post": {
+        "operationId": "professorController_importarDados_post",
+        "summary": "professorController.importarDados",
+        "tags": ["alunos"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alunos/importacoes/completas": {
+      "post": {
+        "operationId": "professorController_importarDadosCompletos_post",
+        "summary": "professorController.importarDadosCompletos",
+        "tags": ["alunos"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alunos/importacoes/modelo": {
+      "get": {
+        "operationId": "professorController_baixarModeloImportacao_get",
+        "summary": "professorController.baixarModeloImportacao",
+        "tags": ["alunos"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/tarefas": {
+      "get": {
+        "operationId": "tarefaController_listar_get",
+        "summary": "tarefaController.listar",
+        "tags": ["tarefas"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      },
+      "post": {
+        "operationId": "tarefaController_criar_post",
+        "summary": "tarefaController.criar",
+        "tags": ["tarefas"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tarefas/avaliacoes": {
+      "post": {
+        "operationId": "tarefaController_avaliarAluno_post",
+        "summary": "tarefaController.avaliarAluno",
+        "tags": ["tarefas"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tarefas/devolucoes": {
+      "post": {
+        "operationId": "tarefaController_devolverAluno_post",
+        "summary": "tarefaController.devolverAluno",
+        "tags": ["tarefas"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tarefas/atribuicoes/status": {
+      "patch": {
+        "operationId": "tarefaController_atualizarStatusAluno_patch",
+        "summary": "tarefaController.atualizarStatusAluno",
+        "tags": ["tarefas"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tarefas/estatisticas": {
+      "get": {
+        "operationId": "tarefaController_estatisticas_get",
+        "summary": "tarefaController.estatisticas",
+        "tags": ["tarefas"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/calendario": {
+      "get": {
+        "operationId": "calendarioController_listar_get",
+        "summary": "calendarioController.listar",
+        "tags": ["calendario"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/calendario/eventos": {
+      "post": {
+        "operationId": "calendarioController_criarEvento_post",
+        "summary": "calendarioController.criarEvento",
+        "tags": ["calendario"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calendario/feriados": {
+      "post": {
+        "operationId": "calendarioController_criarFeriado_post",
+        "summary": "calendarioController.criarFeriado",
+        "tags": ["calendario"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calendario/mes": {
+      "get": {
+        "operationId": "calendarioController_dadosMes_get",
+        "summary": "calendarioController.dadosMes",
+        "tags": ["calendario"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/estudante/painel": {
+      "get": {
+        "operationId": "alunoController_dashboard_get",
+        "summary": "alunoController.dashboard",
+        "tags": ["estudante"],
+        "description": "Acesso: Aluno. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/estudante/competencias": {
+      "get": {
+        "operationId": "alunoController_competencias_get",
+        "summary": "alunoController.competencias",
+        "tags": ["estudante"],
+        "description": "Acesso: Aluno. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/estudante/evolucao": {
+      "get": {
+        "operationId": "alunoController_evolucao_get",
+        "summary": "alunoController.evolucao",
+        "tags": ["estudante"],
+        "description": "Acesso: Aluno. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/estudante/senha": {
+      "patch": {
+        "operationId": "alunoController_alterarSenha_patch",
+        "summary": "alunoController.alterarSenha",
+        "tags": ["estudante"],
+        "description": "Acesso: Aluno. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "senha_atual": {
+                    "type": "string"
+                  },
+                  "nova_senha": {
+                    "type": "string",
+                    "minLength": 12,
+                    "maxLength": 128
+                  },
+                  "confirmar_senha": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/estudante/tarefas": {
+      "get": {
+        "operationId": "alunoController_tarefas_get",
+        "summary": "alunoController.tarefas",
+        "tags": ["estudante"],
+        "description": "Acesso: Aluno. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/estudante/grafico": {
+      "get": {
+        "operationId": "alunoController_apiDadosGrafico_get",
+        "summary": "alunoController.apiDadosGrafico",
+        "tags": ["estudante"],
+        "description": "Acesso: Aluno. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/estudante/ranking": {
+      "get": {
+        "operationId": "alunoController_apiRankingComparativo_get",
+        "summary": "alunoController.apiRankingComparativo",
+        "tags": ["estudante"],
+        "description": "Acesso: Aluno. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/estudante/ia": {
+      "get": {
+        "operationId": "aiController_studentPage_get",
+        "summary": "aiController.studentPage",
+        "tags": ["estudante"],
+        "description": "Acesso: Aluno. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/admin/usuarios": {
+      "get": {
+        "operationId": "adminController_listarUsuarios_get",
+        "summary": "adminController.listarUsuarios",
+        "tags": ["admin"],
+        "description": "Acesso: Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      },
+      "post": {
+        "operationId": "adminController_adicionarUsuario_post",
+        "summary": "adminController.adicionarUsuario",
+        "tags": ["admin"],
+        "description": "Acesso: Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/usuarios/{id}": {
+      "patch": {
+        "operationId": "adminController_atualizarUsuario_patch",
+        "summary": "adminController.atualizarUsuario",
+        "tags": ["admin"],
+        "description": "Acesso: Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "cargo": {
+                    "type": "string",
+                    "enum": ["Professor", "Coordenador", "Admin"]
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": ["ATIVO", "INATIVO"]
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "adminController_deletarUsuario_delete",
+        "summary": "adminController.deletarUsuario",
+        "tags": ["admin"],
+        "description": "Acesso: Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/solicitacoes-senha": {
+      "get": {
+        "operationId": "adminController_listarSolicitacoesSenha_get",
+        "summary": "adminController.listarSolicitacoesSenha",
+        "tags": ["admin"],
+        "description": "Acesso: Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/admin/diagnosticos": {
+      "post": {
+        "operationId": "adminController_runCheckup_post",
+        "summary": "adminController.runCheckup",
+        "tags": ["admin"],
+        "description": "Acesso: Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/reparos": {
+      "post": {
+        "operationId": "adminController_executeRepair_post",
+        "summary": "adminController.executeRepair",
+        "tags": ["admin"],
+        "description": "Acesso: Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/backups": {
+      "get": {
+        "operationId": "adminController_getBackupInfo_get",
+        "summary": "adminController.getBackupInfo",
+        "tags": ["admin"],
+        "description": "Acesso: Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      },
+      "post": {
+        "operationId": "adminController_triggerBackup_post",
+        "summary": "adminController.triggerBackup",
+        "tags": ["admin"],
+        "description": "Acesso: Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conta": {
+      "get": {
+        "operationId": "apiController_getConta_get",
+        "summary": "apiController.getConta",
+        "tags": ["conta"],
+        "description": "Acesso: Autenticado. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/notificacoes": {
+      "get": {
+        "operationId": "apiController_getNotificacoes_get",
+        "summary": "apiController.getNotificacoes",
+        "tags": ["notificacoes"],
+        "description": "Acesso: Autenticado. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "apiController_marcarTodasNotificacoesLidas_patch",
+        "summary": "apiController.marcarTodasNotificacoesLidas",
+        "tags": ["notificacoes"],
+        "description": "Acesso: Autenticado. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/preferencias/notificacoes": {
+      "get": {
+        "operationId": "apiController_getConfiguracoesNotificacoes_get",
+        "summary": "apiController.getConfiguracoesNotificacoes",
+        "tags": ["preferencias"],
+        "description": "Acesso: Autenticado. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "apiController_saveConfiguracoesNotificacoes_patch",
+        "summary": "apiController.saveConfiguracoesNotificacoes",
+        "tags": ["preferencias"],
+        "description": "Acesso: Autenticado. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alunos/busca": {
+      "get": {
+        "operationId": "apiController_buscarAlunos_get",
+        "summary": "apiController.buscarAlunos",
+        "tags": ["alunos"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "apiController_healthCheck_get",
+        "summary": "apiController.healthCheck",
+        "tags": ["health"],
+        "description": "Acesso: Público. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/ia/conversas": {
+      "get": {
+        "operationId": "aiController_history_get",
+        "summary": "aiController.history",
+        "tags": ["ia"],
+        "description": "Acesso: Autenticado. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/auth/professor": {
+      "post": {
+        "operationId": "authController_loginProfessor_post",
+        "summary": "authController.loginProfessor",
+        "tags": ["auth"],
+        "description": "Acesso: Público. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "usuario": {
+                    "type": "string"
+                  },
+                  "senha": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/aluno": {
+      "post": {
+        "operationId": "authController_loginAluno_post",
+        "summary": "authController.loginAluno",
+        "tags": ["auth"],
+        "description": "Acesso: Público. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "senha": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/solicitacoes-senha": {
+      "post": {
+        "operationId": "authController_solicitarRedefinicaoSenha_post",
+        "summary": "authController.solicitarRedefinicaoSenha",
+        "tags": ["auth"],
+        "description": "Acesso: Público. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "202": {
+            "description": "Solicitação recebida; não revela existência da conta"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alunos/importacoes/preview": {
+      "post": {
+        "operationId": "spreadsheets_preview_post",
+        "summary": "spreadsheets.preview",
+        "tags": ["alunos"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "arquivo": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "resposta_texto": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alunos/exportacoes": {
+      "get": {
+        "operationId": "spreadsheets_export_get",
+        "summary": "spreadsheets.export",
+        "tags": ["alunos"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/alunos/{id}": {
+      "get": {
+        "operationId": "professorController_alunoDados_get",
+        "summary": "professorController.alunoDados",
+        "tags": ["alunos"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "professorController_deleteAluno_delete",
+        "summary": "professorController.deleteAluno",
+        "tags": ["alunos"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alunos/{id}/redefinicao-senha": {
+      "post": {
+        "operationId": "professorController_gerarSenhaAluno_post",
+        "summary": "professorController.gerarSenhaAluno",
+        "tags": ["alunos"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alunos/{id}/competencias": {
+      "get": {
+        "operationId": "professorController_competenciasAluno_get",
+        "summary": "professorController.competenciasAluno",
+        "tags": ["alunos"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/avaliacoes/{id}": {
+      "delete": {
+        "operationId": "professorController_deletarCompetencia_delete",
+        "summary": "professorController.deletarCompetencia",
+        "tags": ["avaliacoes"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tarefas/{id}": {
+      "get": {
+        "operationId": "tarefaController_obterDetalhes_get",
+        "summary": "tarefaController.obterDetalhes",
+        "tags": ["tarefas"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "tarefaController_editar_patch",
+        "summary": "tarefaController.editar",
+        "tags": ["tarefas"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "tarefaController_excluir_delete",
+        "summary": "tarefaController.excluir",
+        "tags": ["tarefas"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calendario/eventos/{id}": {
+      "delete": {
+        "operationId": "calendarioController_deletarEvento_delete",
+        "summary": "calendarioController.deletarEvento",
+        "tags": ["calendario"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/calendario/feriados/{id}": {
+      "delete": {
+        "operationId": "calendarioController_deletarFeriado_delete",
+        "summary": "calendarioController.deletarFeriado",
+        "tags": ["calendario"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/estudante/atribuicoes/{id}/entregas": {
+      "post": {
+        "operationId": "alunoController_enviarTarefa_post",
+        "summary": "alunoController.enviarTarefa",
+        "tags": ["estudante"],
+        "description": "Acesso: Aluno. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "arquivo": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "resposta_texto": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/solicitacoes-senha/{id}/aprovacoes": {
+      "post": {
+        "operationId": "adminController_aprovarSolicitacaoSenha_post",
+        "summary": "adminController.aprovarSolicitacaoSenha",
+        "tags": ["admin"],
+        "description": "Acesso: Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/solicitacoes-senha/{id}/rejeicoes": {
+      "post": {
+        "operationId": "adminController_rejeitarSolicitacaoSenha_post",
+        "summary": "adminController.rejeitarSolicitacaoSenha",
+        "tags": ["admin"],
+        "description": "Acesso: Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/reauth": {
+      "post": {
+        "operationId": "adminController_verifyDeletePassword_post",
+        "summary": "adminController.verifyDeletePassword",
+        "tags": ["admin"],
+        "description": "Acesso: Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/backups/{filename}": {
+      "get": {
+        "operationId": "adminController_downloadBackupFile_get",
+        "summary": "adminController.downloadBackupFile",
+        "tags": ["admin"],
+        "description": "Acesso: Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/notificacoes/{id}": {
+      "patch": {
+        "operationId": "apiController_marcarNotificacaoLida_patch",
+        "summary": "apiController.marcarNotificacaoLida",
+        "tags": ["notificacoes"],
+        "description": "Acesso: Autenticado. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/csrf": {
+      "get": {
+        "operationId": "public_get",
+        "summary": "/auth/csrf",
+        "tags": ["auth"],
+        "description": "Acesso: Público. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/ia/conversas/{id}": {
+      "patch": {
+        "operationId": "aiController_updateConversation_patch",
+        "summary": "aiController.updateConversation",
+        "tags": ["ia"],
+        "description": "Acesso: Autenticado. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ia/estudante/mensagens": {
+      "post": {
+        "operationId": "aiController_studentChat_post",
+        "summary": "aiController.studentChat",
+        "tags": ["ia"],
+        "description": "Acesso: Aluno. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "maxLength": 4000
+                  },
+                  "conversationId": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ia/professor/mensagens": {
+      "post": {
+        "operationId": "aiController_teacherChat_post",
+        "summary": "aiController.teacherChat",
+        "tags": ["ia"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "maxLength": 4000
+                  },
+                  "conversationId": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ia/alunos/{id}/analises": {
+      "post": {
+        "operationId": "aiController_analyzeStudent_post",
+        "summary": "aiController.analyzeStudent",
+        "tags": ["ia"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ia/avaliacoes": {
+      "post": {
+        "operationId": "aiController_updateGrade_post",
+        "summary": "aiController.updateGrade",
+        "tags": ["ia"],
+        "description": "Acesso: Professor/Coordenador/Admin. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Obtido em GET /auth/session; enviar também Origin igual a APP_ORIGIN."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "alunoId": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "competenciaId": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "nota": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 10
+                  },
+                  "confirm": {
+                    "type": "boolean",
+                    "const": true
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/session": {
+      "get": {
+        "operationId": "presentation_session_get",
+        "summary": "presentation.session",
+        "tags": ["auth"],
+        "description": "Acesso: Público. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "operationId": "presentation_metadata_get",
+        "summary": "presentation.metadata",
+        "tags": ["metadata"],
+        "description": "Acesso: Público. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "operationId": "presentation_documentation_get",
+        "summary": "presentation.documentation",
+        "tags": ["openapi.json"],
+        "description": "Acesso: Público. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    },
+    "/arquivos/{filename}": {
+      "get": {
+        "operationId": "presentation_protectedFile_get",
+        "summary": "presentation.protectedFile",
+        "tags": ["arquivos"],
+        "description": "Acesso: Autenticado + proprietário. Resultados JSON; operações de formulário podem retornar success, message e next (sem redirecionamento HTTP).",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída / DTO ou arquivo"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "401": {
+            "description": "Sessão necessária"
+          },
+          "403": {
+            "description": "Perfil, origem ou CSRF recusado"
+          },
+          "404": {
+            "description": "Recurso não disponível"
+          },
+          "409": {
+            "description": "Conflito de estado ou duplicidade"
+          },
+          "429": {
+            "description": "Limite de requisições"
+          },
+          "500": {
+            "description": "Falha interna sem detalhes confidenciais"
+          }
+        }
+      }
+    }
+  }
+}

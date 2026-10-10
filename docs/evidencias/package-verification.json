@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-10",
+  "originalFiles": 190,
+  "staticFilesPreserved": 88,
+  "originalCssPreserved": 26,
+  "nativePages": 25,
+  "sharedComponents": 4,
+  "frontendEnvironmentKeys": [
+    "VITE_API_URL"
+  ],
+  "backendSecretsInFrontend": false,
+  "ejsInDeliveredSource": false,
+  "productionDatabaseWritesPerformed": false,
+  "pixelComparisonPerformed": false
+}

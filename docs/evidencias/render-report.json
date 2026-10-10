@@ -1,0 +1,127 @@
+[
+  {
+    "page": "error",
+    "status": "passed",
+    "bytes": 582
+  },
+  {
+    "page": "esqueciSenha",
+    "status": "passed",
+    "bytes": 1356
+  },
+  {
+    "page": "index",
+    "status": "passed",
+    "bytes": 5051
+  },
+  {
+    "page": "login",
+    "status": "passed",
+    "bytes": 2098
+  },
+  {
+    "page": "manuais",
+    "status": "passed",
+    "bytes": 13093
+  },
+  {
+    "page": "manualDoAluno",
+    "status": "passed",
+    "bytes": 9033
+  },
+  {
+    "page": "manualDoProfessor",
+    "status": "passed",
+    "bytes": 12879
+  },
+  {
+    "page": "termos",
+    "status": "passed",
+    "bytes": 1726
+  },
+  {
+    "page": "aluno/alunoCompetencias",
+    "status": "passed",
+    "bytes": 15672
+  },
+  {
+    "page": "aluno/alunoDashboard",
+    "status": "passed",
+    "bytes": 11790
+  },
+  {
+    "page": "aluno/alunoEvolucao",
+    "status": "passed",
+    "bytes": 12864
+  },
+  {
+    "page": "aluno/alunoIA",
+    "status": "passed",
+    "bytes": 9698
+  },
+  {
+    "page": "aluno/alunoPerfil",
+    "status": "passed",
+    "bytes": 11242
+  },
+  {
+    "page": "aluno/alunoTarefas",
+    "status": "passed",
+    "bytes": 13001
+  },
+  {
+    "page": "dashboard/dashboardCalendario",
+    "status": "passed",
+    "bytes": 22831
+  },
+  {
+    "page": "dashboard/dashboardConfig",
+    "status": "passed",
+    "bytes": 15860
+  },
+  {
+    "page": "dashboard/dashboardEdit",
+    "status": "passed",
+    "bytes": 32422
+  },
+  {
+    "page": "dashboard/dashboardEquipe",
+    "status": "passed",
+    "bytes": 1186
+  },
+  {
+    "page": "dashboard/dashboardGraficos",
+    "status": "passed",
+    "bytes": 14250
+  },
+  {
+    "page": "dashboard/dashboardIA",
+    "status": "passed",
+    "bytes": 13604
+  },
+  {
+    "page": "dashboard/dashboardMain",
+    "status": "passed",
+    "bytes": 16092
+  },
+  {
+    "page": "dashboard/dashboardSolicitacoes",
+    "status": "passed",
+    "bytes": 14441
+  },
+  {
+    "page": "dashboard/dashboardTarefas",
+    "status": "passed",
+    "bytes": 23826
+  },
+  {
+    "page": "dashboard/dashboardUsuarios",
+    "status": "passed",
+    "bytes": 17293
+  },
+  {
+    "page": "API/index",
+    "status": "passed",
+    "bytes": 7589
+  }
+]

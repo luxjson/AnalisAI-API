@@ -1,0 +1,198 @@
+{
+  "date": "2026-10-10",
+  "apiTests": {
+    "total": 42,
+    "passed": 42,
+    "failed": 0
+  },
+  "siteTests": {
+    "total": 51,
+    "passed": 51,
+    "failed": 0
+  },
+  "nativePagesRendered": 25,
+  "markupPagesIdentical": 25,
+  "interactionInitializationPages": 25,
+  "unboundIdentifiers": 0,
+  "frontendEnvironmentVariables": [
+    "VITE_API_URL"
+  ],
+  "backendSecretsInFrontend": false,
+  "npmAudit": {
+    "api": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "site": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    }
+  },
+  "siteBuild": "passed",
+  "productionDatabaseWrites": false,
+  "pixelBrowserTest": false,
+  "deployed": false,
+  "realAiProviderCall": false,
+  "styleRevision": {
+    "date": "2026-10-10",
+    "originalFilesScanned": 190,
+    "staticVisualFilesIdentical": 88,
+    "originalCssFilesIdentical": 26,
+    "inlineStyleBlocksIdentical": 2,
+    "cssDeclarations": 6927,
+    "cssMediaQueries": 86,
+    "fontsIdentical": 39,
+    "imageFilesIdentical": 20,
+    "pageMarkupIdentical": 25,
+    "stylesheetOrderIdentical": 25,
+    "pageOrdersWithRestoredRepeatedStyles": 7,
+    "dynamicStatesIdentical": 26,
+    "chartConfigurationsIdentical": 9,
+    "siteTestsPassed": 37,
+    "siteBuild": "passed",
+    "browserPixelComparison": false,
+    "responsiveViewportsRendered": false
+  },
+  "chatResetFix": {
+    "date": "2026-10-10",
+    "cause": "O reset tratava o JSX de boas-vindas como HTML de resposta da IA e removia divs, botões e ícone durante a sanitização.",
+    "fix": "Boas-vindas em componentes JSX compartilhados; sugestões com delegação de eventos; desmontagem e limpeza das mensagens e cartões de histórico antes da substituição.",
+    "rolesTested": [
+      "professor",
+      "aluno"
+    ],
+    "welcomeResetsComparedPerRole": 5,
+    "suggestionsTestedPerRole": 3,
+    "historySwitchesTestedPerRole": 2,
+    "cssFilesChanged": 0,
+    "siteTests": {
+      "total": 36,
+      "passed": 36,
+      "failed": 0
+    },
+    "siteBuild": "passed",
+    "originalMarkupPagesIdentical": 25,
+    "originalStaticAssetsIdentical": 88,
+    "aiOutputSanitizationPreserved": true,
+    "realAiProviderCall": false,
+    "browserPixelComparison": false
+  },
+  "studentPasswordResetFix": {
+    "date": "2026-10-10",
+    "cause": "O evento JSX do botão enviava a string literal id em vez da variável com o ID do aluno selecionado.",
+    "frontendFile": "src/interactions/pages_dashboard_edit.jsx",
+    "roles": "professor",
+    "studentIdsTested": [
+      17,
+      42
+    ],
+    "cancelConfirmationTested": true,
+    "backendValidationUnchanged": true,
+    "siteTestsPassed": 37,
+    "siteBuild": "passed",
+    "realPasswordResetsPerformed": false
+  },
+  "navigationSkeletons": {
+    "date": "2026-10-10",
+    "internalNavigation": "History API",
+    "globalLoadingScreenRemoved": true,
+    "persistentSidebar": true,
+    "pageSkeletons": 25,
+    "originalCssFilesChanged": 0,
+    "addedSkeletonStylesheet": "src/styles/skeleton.css",
+    "prefersReducedMotion": true,
+    "stalePageLoadsAborted": true,
+    "staleInteractionResponsesDiscarded": true,
+    "eventsTimersChartsDisposed": true,
+    "getFiltersAndHistoryTested": true,
+    "authenticatedRoutesRepeatedlyVisited": true,
+    "settingsDeepLinksTested": true,
+    "siteTestsPassed": 43,
+    "apiTestsPassed": 39,
+    "siteBuild": "passed",
+    "frontendEnvironmentKeys": [
+      "VITE_API_URL"
+    ],
+    "productionDatabaseWrites": false,
+    "browserPixelComparison": false
+  },
+  "individualSkeletons": {
+    "date": "2026-10-10",
+    "individualSkeletonModules": 25,
+    "sharedNativePageLayouts": 25,
+    "dynamicTextSlots": 190,
+    "containerClassInlineStyleParity": 25,
+    "originalStylesheetsModified": 0,
+    "originalStaticVisualFilesIdentical": 88,
+    "chartFramesUseNativeDimensions": true,
+    "calendarSelectedMonthTested": true,
+    "loadingControlsInert": true,
+    "loadingDataScriptsOmitted": true,
+    "siteTestsPassed": 45,
+    "apiTestsPassed": 39,
+    "siteBuild": "passed",
+    "browserPixelComparison": false,
+    "productionDatabaseWrites": false
+  },
+  "currentCodeReview": {
+    "filesInventoried": 331,
+    "codeFilesParsed": 155,
+    "commentsRemoved": 54,
+    "unusedImportsRemoved": 188,
+    "unusedRequireBindingsRemoved": 9,
+    "cssFilesEquivalent": 32,
+    "migrationsEquivalent": 4,
+    "repositoryQueriesEquivalent": 250,
+    "issues": [],
+    "date": "2026-10-10",
+    "siteTestsPassed": 50,
+    "apiTestsPassed": 42,
+    "siteBuild": "passed",
+    "formattedFiles": 219,
+    "formatCheckFiles": 198,
+    "unguardedPromiseChainsFixed": 10,
+    "unusedScopeBindingsRemoved": 27,
+    "businessRulesPreserved": true,
+    "visualCssRulesEquivalent": true,
+    "frontendEnvironmentKeys": [
+      "VITE_API_URL"
+    ],
+    "productionDatabaseWrites": false,
+    "browserPixelComparison": false
+  },
+  "fullSkeletons": {
+    "date": "2026-10-10",
+    "siteTestsPassed": 51,
+    "siteTestsFailed": 0,
+    "buildPassed": true,
+    "pagesWithFullSkeleton": 25,
+    "sidebarsWithFullSkeleton": 2,
+    "nativeElementsCovered": 2232,
+    "loadedMarkupUnchangedPages": 25,
+    "unmaskedTexts": 0,
+    "allOriginalCssPreserved": true,
+    "apiRuntimeUnchanged": true,
+    "lastApiTestsPassed": 42,
+    "pixelComparisonPerformed": false,
+    "referenceImagesReviewed": 6,
+    "formatCheck": {
+      "checked": 94,
+      "bad": []
+    },
+    "notes": [
+      "Textos fixos e dados, ícones, imagens e controles ficam mascarados durante a espera.",
+      "Skeleton mantém JSX, estrutura e regras responsivas nativas.",
+      "Imagem e textos não são desfocados; usam placeholders sólidos com shimmer.",
+      "CSS novo só afeta elementos marcados enquanto carregam.",
+      "Comparação de pixels não executada: Chromium não iniciou neste ambiente."
+    ]
+  }
+}
