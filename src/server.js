@@ -3,6 +3,7 @@ const db = require("./infrastructure/database");
 const config = require("./presentation/config");
 async function start() {
   await db.query("SELECT 1");
+  // Fail clearly if deploy forgot the explicit migration; no DDL on HTTP requests.
   await db.query("SELECT 1 FROM security_rate_limits LIMIT 0");
   const server = createApp().listen(config.port, "0.0.0.0", () =>
     console.log(`AnalisAI API disponível na porta ${config.port}`),

@@ -1,3 +1,4 @@
+// Validate ZIP metadata before handing XLSX contents to the isolated parser.
 function spreadsheetArchiveAllowed(buffer) {
   if (buffer.subarray(0, 2).toString() !== "PK") return true;
   let end = -1;

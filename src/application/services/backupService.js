@@ -24,6 +24,11 @@ function serialize(value) {
     );
   return value;
 }
+
+/**
+ * Cria um snapshot (branch) no Neon via API.
+ * Retorna os dados do branch criado.
+ */
 async function createNeonSnapshot() {
   const apiKey = process.env.NEON_API_KEY;
   const projectId = process.env.NEON_PROJECT_ID;
