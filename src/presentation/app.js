@@ -95,7 +95,12 @@ function createApp({ store } = {}) {
         if (filename.length > 255 || !/^[a-zA-Z0-9._-]+$/.test(filename))
           return res.status(400).json({ error: "Arquivo inválido." });
         const access = await db.query(
-          `SELECT ta.aluno_id,t.criado_por FROM tarefas_alunos ta JOIN tarefas t ON t.id=ta.tarefa_id WHERE ta.resposta_arquivo=$1`,
+          `
+  SELECT ta.aluno_id, t.criado_por
+  FROM tarefas_alunos ta
+  JOIN tarefas t ON t.id = ta.tarefa_id
+  WHERE ta.resposta_arquivo = $1
+`,
           [filename],
         );
         const permitted = access.rows.some(

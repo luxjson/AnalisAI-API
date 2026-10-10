@@ -1,17 +1,7 @@
 const repository = require("../../infrastructure/repositories/alunoUseCasesRepository.js");
-const fs = require("fs");
-const path = require("path");
 const { criarNotificacao } = require("../services/notificationService");
-const fileStore = require("../../infrastructure/fileStore");
-const bcrypt = require("../../infrastructure/passwords");
-const {
-  text,
-  integerId,
-  password,
-  numberInRange,
-  booleanValue,
-  ALLOWED_YEARS,
-} = require("../../domain/validation");
+const passwords = require("../../infrastructure/passwords");
+const { text, integerId, password } = require("../../domain/validation");
 exports.dashboard = async (command, outcome) => {
   try {
     const alunoId = command.session.aluno.id;
@@ -160,7 +150,7 @@ exports.alterarSenha = async (command, outcome) => {
       command.message("error_msg", "Aluno não encontrado");
       return voltar();
     }
-    const senhaAtualValida = await bcrypt.compare(
+    const senhaAtualValida = await passwords.compare(
       senha_atual,
       result.rows[0].senha,
     );
@@ -179,7 +169,7 @@ exports.alterarSenha = async (command, outcome) => {
       command.message("error_msg", "As senhas não coincidem");
       return voltar();
     }
-    const novaSenhaHash = await bcrypt.hash(nova_senha, 12);
+    const novaSenhaHash = await passwords.hash(nova_senha);
     await repository.query(repository.alterarSenhaSql2(), [
       novaSenhaHash,
       alunoId,

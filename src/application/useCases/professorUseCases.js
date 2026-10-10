@@ -1,8 +1,7 @@
 const repository = require("../../infrastructure/repositories/professorUseCasesRepository.js");
-const ExcelJS = require("exceljs");
 const path = require("path");
 const fs = require("fs");
-const bcrypt = require("../../infrastructure/passwords");
+const passwords = require("../../infrastructure/passwords");
 const crypto = require("crypto");
 const {
   text,
@@ -13,7 +12,6 @@ const {
   ALLOWED_YEARS,
   randomPassword,
   normalizeToEmailName,
-  generateStudentEmail,
 } = require("../../domain/validation");
 exports.dashboard = async (command, outcome) => {
   try {
@@ -190,7 +188,7 @@ exports.alterarSenha = async (command, outcome) => {
       return outcome.complete("/dashboard?settings=account");
     }
     const user = result.rows[0];
-    const senhaAtualValida = await bcrypt.compare(senha_atual, user.senha);
+    const senhaAtualValida = await passwords.compare(senha_atual, user.senha);
     if (!senhaAtualValida) {
       command.message("error_msg", "Senha atual incorreta");
       return outcome.complete("/dashboard?settings=account");
@@ -206,7 +204,7 @@ exports.alterarSenha = async (command, outcome) => {
       command.message("error_msg", "As senhas não coincidem");
       return outcome.complete("/dashboard?settings=account");
     }
-    const novaSenhaHash = await bcrypt.hash(nova_senha, 12);
+    const novaSenhaHash = await passwords.hash(nova_senha);
     await repository.query(repository.alterarSenhaSql2(), [
       novaSenhaHash,
       command.session.userId,
@@ -267,7 +265,7 @@ exports.gerarSenhaAluno = async (command, outcome) => {
         error: "ID de aluno inválido",
       });
     const senha = randomPassword();
-    const senhaHash = await bcrypt.hash(senha, 12);
+    const senhaHash = await passwords.hash(senha);
     const result = await repository.query(repository.gerarSenhaAlunoSql1(), [
       senhaHash,
       alunoId,
@@ -414,7 +412,7 @@ exports.addAluno = async (command, outcome) => {
     const email = `${(normalizeToEmailName(nome) || "aluno").slice(0, 55)}-${crypto.randomBytes(4).toString("hex")}@aluno.analisai.com`;
     const matricula = `ALU${crypto.randomBytes(7).toString("hex").toUpperCase()}`;
     const senha = randomPassword();
-    const senhaHash = await bcrypt.hash(senha, 12);
+    const senhaHash = await passwords.hash(senha);
     const alunoResult = await client.query(repository.addAlunoSql4(), [
       nome,
       ano_escolar,
@@ -610,7 +608,7 @@ async function processarImportacao(command, alunos, incluirCompetencias) {
       const email = `${(normalizeToEmailName(item.nome) || "aluno").slice(0, 55)}-${crypto.randomBytes(4).toString("hex")}@aluno.analisai.com`;
       const matricula = `ALU${crypto.randomBytes(7).toString("hex").toUpperCase()}`;
       const senhaTemporaria = randomPassword();
-      const senhaHash = await bcrypt.hash(senhaTemporaria, 12);
+      const senhaHash = await passwords.hash(senhaTemporaria);
       const alunoResult = await client.query(
         repository.processarImportacaoSql4(),
         [item.nome, item.ano_escolar, item.idade, item.presenca],

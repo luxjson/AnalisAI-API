@@ -31,7 +31,10 @@ async function migrate() {
       "SELECT pg_advisory_xact_lock(hashtext('analisai-migrations-v2'))",
     );
     await client.query(
-      "CREATE TABLE IF NOT EXISTS schema_migrations(name TEXT PRIMARY KEY,applied_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP)",
+      `
+  CREATE TABLE IF NOT EXISTS schema_migrations(name TEXT PRIMARY KEY,
+    applied_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP)
+`,
     );
     for (const name of fs
       .readdirSync(path.join(__dirname, "../migrations"))

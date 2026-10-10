@@ -78,6 +78,7 @@ exports.criarEvento = async (command, outcome) => {
     !titulo ||
     !data_inicio ||
     !tipo ||
+    (command.input.turma && !turma) ||
     (command.input.cor && !cor) ||
     (command.input.data_fim && !data_fim) ||
     (data_fim && data_fim < data_inicio)

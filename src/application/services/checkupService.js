@@ -1,9 +1,5 @@
 const repository = require("../../infrastructure/repositories/checkupServiceRepository.js");
-const bcrypt = require("../../infrastructure/passwords");
-
-/**
- * Tabelas gerenciadas pelo sistema para diagnóstico
- */
+const passwords = require("../../infrastructure/passwords");
 const SYSTEM_TABLES = [
   "usuarios",
   "alunos",
@@ -22,10 +18,6 @@ const SYSTEM_TABLES = [
   "ia_mensagens",
   "ia_auditoria_notas",
 ];
-
-/**
- * Executa o diagnóstico completo de todas as tabelas
- */
 async function runSystemCheckup() {
   const results = [];
   for (const tableName of SYSTEM_TABLES) {
@@ -283,10 +275,6 @@ async function diagnoseTable(tableName) {
     issues,
   };
 }
-
-/**
- * Executa o reparo e saneamento de uma ou todas as tabelas
- */
 async function repairSystem(targetTable = "all") {
   if (targetTable !== "all" && !SYSTEM_TABLES.includes(targetTable)) {
     const error = new Error("Tabela de reparo inválida.");
@@ -332,7 +320,7 @@ async function repairSystem(targetTable = "all") {
               const email = `${emailPrefix}${aluno.id}@escola.com`;
               const defaultPass =
                 require("../../domain/validation").randomPassword();
-              const hash = await bcrypt.hash(defaultPass);
+              const hash = await passwords.hash(defaultPass);
               credenciais.push({
                 nome: aluno.nome,
                 email,

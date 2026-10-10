@@ -1,6 +1,6 @@
 const repository = require("../../infrastructure/repositories/adminUseCasesRepository.js");
 const { criarNotificacao } = require("../services/notificationService");
-const bcrypt = require("../../infrastructure/passwords");
+const passwords = require("../../infrastructure/passwords");
 const crypto = require("crypto");
 const {
   text,
@@ -68,7 +68,7 @@ exports.adicionarUsuario = async (command, outcome) => {
     return outcome.complete("/dashboard/usuarios");
   }
   try {
-    const senhaHash = await bcrypt.hash(senha, 12);
+    const senhaHash = await passwords.hash(senha);
     await repository.query(repository.adicionarUsuarioSql1(), [
       nome,
       userEmail,
@@ -257,7 +257,7 @@ exports.aprovarSolicitacaoSenha = async (command, outcome) => {
       command.message("error_msg", "Usuário não encontrado.");
       return outcome.complete("/dashboard/solicitacoes-senha");
     }
-    const novaSenhaHash = await bcrypt.hash(novaSenha, 12);
+    const novaSenhaHash = await passwords.hash(novaSenha);
     await client.query(repository.aprovarSolicitacaoSenhaSql6(), [
       novaSenhaHash,
       request.usuario_id,
@@ -367,7 +367,7 @@ exports.verifyDeletePassword = async (command, outcome) => {
       .update(expectedPassword)
       .digest();
     const isMatch = expectedPassword.startsWith("$argon2")
-      ? await bcrypt.compare(password, expectedPassword)
+      ? await passwords.compare(password, expectedPassword)
       : crypto.timingSafeEqual(hashProvided, hashExpected);
     if (isMatch) {
       command.session.adminCheckupUnlocked = true;

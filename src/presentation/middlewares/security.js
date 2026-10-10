@@ -39,11 +39,21 @@ function rateLimit({ windowMs, max, keyPrefix = "global" }) {
       .digest("hex");
     try {
       const result = await db.query(
-        `INSERT INTO security_rate_limits(rate_key,window_start,request_count) VALUES($1,CURRENT_TIMESTAMP,1)
-   ON CONFLICT(rate_key) DO UPDATE SET
-   window_start=CASE WHEN security_rate_limits.window_start <= CURRENT_TIMESTAMP - $2::bigint * INTERVAL '1 millisecond' THEN CURRENT_TIMESTAMP ELSE security_rate_limits.window_start END,
-   request_count=CASE WHEN security_rate_limits.window_start <= CURRENT_TIMESTAMP - $2::bigint * INTERVAL '1 millisecond' THEN 1 ELSE security_rate_limits.request_count+1 END
-   RETURNING request_count,window_start`,
+        `
+  INSERT INTO security_rate_limits(rate_key, window_start,
+    request_count)
+  VALUES ($1, CURRENT_TIMESTAMP, 1) ON CONFLICT(rate_key) DO UPDATE
+  SET window_start = CASE
+  WHEN security_rate_limits.window_start <= CURRENT_TIMESTAMP - $2::bigint *
+  INTERVAL '1 millisecond' THEN
+  CURRENT_TIMESTAMP
+  ELSE security_rate_limits.window_start END, request_count = CASE
+  WHEN security_rate_limits.window_start <= CURRENT_TIMESTAMP - $2::bigint *
+  INTERVAL '1 millisecond' THEN
+  1
+  ELSE security_rate_limits.request_count + 1 END
+  RETURNING request_count, window_start
+`,
         [key, windowMs],
       );
       const entry = result.rows[0];

@@ -1,5 +1,4 @@
 const repository = require("../../infrastructure/repositories/apiUseCasesRepository.js");
-const { criarNotificacao } = require("../services/notificationService");
 const {
   integerId,
   text,

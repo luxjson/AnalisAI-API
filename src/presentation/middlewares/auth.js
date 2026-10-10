@@ -24,7 +24,13 @@ async function refreshIdentity(req, res, next) {
       };
     } else if (req.session.aluno) {
       const r = await db.query(
-        `SELECT a.id,a.nome,a.ano_escolar,al.id login_id,al.matricula,al.status FROM alunos a JOIN alunos_login al ON al.aluno_id=a.id WHERE a.id=$1`,
+        `
+  SELECT a.id, a.nome, a.ano_escolar, al.id login_id, al.matricula,
+  al.status
+  FROM alunos a
+  JOIN alunos_login al ON al.aluno_id = a.id
+  WHERE a.id = $1
+`,
         [req.session.aluno.id],
       );
       const u = r.rows[0];

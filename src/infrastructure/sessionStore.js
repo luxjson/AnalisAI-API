@@ -5,6 +5,7 @@ class PostgresSessionStore extends session.Store {
   constructor() {
     super();
     this.ready = db.query("SELECT 1 FROM web_sessions LIMIT 0");
+    this.ready.catch(() => {});
     this.cleanup = setInterval(
       () => {
         db.query(
@@ -35,8 +36,11 @@ class PostgresSessionStore extends session.Store {
         ? new Date(sess.cookie.expires)
         : new Date(Date.now() + (sess.cookie?.maxAge || 28_800_000));
       await db.query(
-        `INSERT INTO web_sessions (sid, sess, expire) VALUES ($1, $2::jsonb, $3)
-        ON CONFLICT (sid) DO UPDATE SET sess = EXCLUDED.sess, expire = EXCLUDED.expire`,
+        `
+  INSERT INTO web_sessions(sid, sess, expire)
+  VALUES ($1, $2::jsonb, $3) ON CONFLICT(sid) DO UPDATE
+  SET sess = EXCLUDED.sess, expire = EXCLUDED.expire
+`,
         [sid, JSON.stringify(sess), expire],
       );
       callback?.(null);

@@ -1,4 +1,3 @@
-// Original pedagogical thresholds. The client receives results, not these rules.
 function gradeClass(value) {
   const n = Number(value) || 0;
   return n >= 7 ? "apto" : n >= 5 ? "desenvolvimento" : "inapto";

@@ -202,8 +202,12 @@ exports.studentChat = async (command, outcome) => {
       ? await getConversationHistory(conversation.id)
       : [];
     if (isDirectAnswerRequest(message)) {
-      const answer =
-        "Posso ajudar você a entender o conteúdo e montar os passos da solução, mas não posso entregar uma atividade, prova ou exercício pronto. Envie o enunciado ou diga qual parte ficou difícil.";
+      const answer = [
+        "Posso ajudar você a entender o conteúdo e montar os passos da ",
+        "solução, mas não posso entregar uma atividade, prova ou ",
+        "exercício pronto. Envie o enunciado ou diga qual parte ficou ",
+        "difícil.",
+      ].join("");
       conversation = await persistExchange(
         command,
         conversation,

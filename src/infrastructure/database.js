@@ -1,6 +1,6 @@
 require("dotenv").config();
 const { Pool, types } = require("pg");
-// SQL DATE is a calendar day, without an implicit timezone shift.
+
 types.setTypeParser(1082, (value) => value);
 
 if (!process.env.DB_URL) throw new Error("DB_URL deve ser configurado.");
@@ -16,7 +16,7 @@ if (production && allowInsecureTls)
 
 let connectionString = process.env.DB_URL;
 const databaseUrl = new URL(connectionString);
-// URL TLS flags must not override the explicit verified TLS configuration below.
+
 for (const key of [
   "sslmode",
   "uselibpqcompat",
@@ -34,10 +34,10 @@ const pool = new Pool({
       ? false
       : { rejectUnauthorized: !allowInsecureTls },
   max: Number(process.env.DB_POOL_MAX) || 3,
-  idleTimeoutMillis: 10_000, // Libera conexões ociosas após 10 segundos
-  connectionTimeoutMillis: 5_000, // Tempo máximo para estabelecer conexão
-  statement_timeout: 15_000, // Timeout para cada statement SQL
-  query_timeout: 15_000, // Timeout para consultas completas
+  idleTimeoutMillis: 10_000,
+  connectionTimeoutMillis: 5_000,
+  statement_timeout: 15_000,
+  query_timeout: 15_000,
   application_name: "analisai",
 });
 

@@ -1,5 +1,5 @@
 const { project } = require("../application/services/projections");
-// The HTTP boundary converts application results into JSON or protected downloads.
+
 function execute(useCase) {
   return async (req, res, next) => {
     const messages = {};

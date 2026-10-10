@@ -88,7 +88,8 @@ async function generateResponse({
   );
   let data = await response.json().catch(() => ({}));
   if (response.status === 429 || response.status === 503) {
-    const retryAfter = Number(response.headers.get("retry-after"));
+    const retryHeader = response.headers.get("retry-after");
+    const retryAfter = retryHeader === null ? NaN : Number(retryHeader);
     const delay = Number.isFinite(retryAfter)
       ? Math.min(Math.max(0, retryAfter * 1000), AI_RETRY_DELAY_MS)
       : AI_RETRY_DELAY_MS;
@@ -153,7 +154,8 @@ async function generateGroqResponse({
   );
   let data = await response.json().catch(() => ({}));
   if (response.status === 429 || response.status === 503) {
-    const retryAfter = Number(response.headers.get("retry-after"));
+    const retryHeader = response.headers.get("retry-after");
+    const retryAfter = retryHeader === null ? NaN : Number(retryHeader);
     const delay = Number.isFinite(retryAfter)
       ? Math.min(Math.max(0, retryAfter * 1000), AI_RETRY_DELAY_MS)
       : AI_RETRY_DELAY_MS;
