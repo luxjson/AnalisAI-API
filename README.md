@@ -1,4 +1,4 @@
-<img src="https://github.com/luxjson/AnalisAI-Express/tree/main/public/images/gitlogo.png" width="100px" align="left">
+<img src="https://github.com/luxjson/AnalisAI-Express/blob/main/public/images/gitlogo.png" width="100px" align="left">
 
 ### `AnalisAI`
 
