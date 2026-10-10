@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: analisai-api
+    runtime: node
+    rootDir: api
+    plan: starter
+    region: virginia
+    buildCommand: npm ci --omit=dev
+    preDeployCommand: npm run migrate
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 24.19.0
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: APP_ORIGIN
+        sync: false
+      - key: DB_URL
+        sync: false
+      - key: DB_URL_UNPOOLED
+        sync: false
+      - key: DB_POOL_MAX
+        value: 3
+      - key: AI_PROVIDER
+        sync: false
+      - key: AI_KEY
+        sync: false
+      - key: AI_MODEL
+        sync: false
+      - key: PASS_DELETE_HASH
+        sync: false
+      - key: BACKUP_ENABLED
+        value: false
