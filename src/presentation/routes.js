@@ -372,6 +372,7 @@ router.post(
 router.post(
   "/ia/avaliacoes",
   checkTeacherOrAdmin,
+  checkAssignedClass,
   rateLimit({ windowMs: 60 * 1000, max: 20, keyPrefix: "ai-grade-update" }),
   execute(aiController.updateGrade),
 );
