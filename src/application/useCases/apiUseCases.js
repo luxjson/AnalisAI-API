@@ -82,6 +82,7 @@ exports.getConta = async (command, outcome) => {
         name: row.nome,
         email: row.email || "Não informado",
         role: row.cargo || command.session.userCargo || "Professor",
+        foto_perfil: row.foto_perfil || null,
         created: formatDate(row.data_criacao),
         lastAccess: formatDateTime(row.ultimo_acesso),
         tasks,
