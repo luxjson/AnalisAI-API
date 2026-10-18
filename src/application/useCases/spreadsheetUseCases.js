@@ -65,7 +65,23 @@ exports.preview = async (command, outcome) => {
   }
 };
 exports.export = async (command, outcome) => {
-  const result = await repository.query(repository.exportSql1());
+  const scoped = command.session.userCargo === "Professor";
+  let classes = null;
+  if (scoped) {
+    const assigned = await repository.query(
+      "SELECT turma FROM professor_turmas WHERE professor_id = $1",
+      [command.session.userId],
+    );
+    classes = assigned.rows.map((row) => row.turma);
+  }
+  const result = scoped
+    ? await repository.query(repository.exportSql1(true), [classes])
+    : await repository.query(repository.exportSql1());
+  const rows = result.rows.map((row) => ({
+    ...row,
+    presenca:
+      row.presenca_calculada == null ? null : Number(row.presenca_calculada),
+  }));
   outcome.header(
     "Content-Type",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -74,5 +90,5 @@ exports.export = async (command, outcome) => {
     "Content-Disposition",
     'attachment; filename="Relatorio_Completo_AnalisAI.xlsx"',
   );
-  return outcome.binary(await exportWorkbook(result.rows));
+  return outcome.binary(await exportWorkbook(rows));
 };
