@@ -56,8 +56,8 @@ exports.attendanceStudentsSql = () => `
     COALESCE(ano.faltas, 0)::INTEGER AS faltas,
     COALESCE(ano.justificadas, 0)::INTEGER AS justificadas,
     COALESCE(ano.dias_registrados, 0)::INTEGER AS dias_registrados,
-    CASE WHEN COALESCE(ano.total_aulas, 0) = 0 THEN 100
-      ELSE ROUND(100.0 * ano.presencas / ano.total_aulas)::INTEGER
+    CASE WHEN COALESCE(ano.total_aulas, 0) = 0 THEN NULL
+      ELSE ROUND(100.0 * ano.presencas / NULLIF(ano.total_aulas, 0))::INTEGER
     END AS frequencia_anual
   FROM alunos a
   LEFT JOIN frequencia_registros hoje
