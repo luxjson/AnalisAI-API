@@ -42,6 +42,6 @@ test("student report service emits a PDF and does not invent 100% attendance whe
   const latin1 = pdf.toString("latin1");
   assert.ok(latin1.includes("/Type /Catalog"));
   assert.ok(latin1.includes("startxref"));
-  assert.ok(latin1.includes("Relatorio pedagogico individual"));
-  assert.ok(latin1.includes("sem registros de aula"));
+  assert.ok(latin1.includes(Buffer.from("Relatorio pedagogico individual", "latin1").toString("hex").toUpperCase()));
+  assert.ok(latin1.includes(Buffer.from("sem registros de aula", "latin1").toString("hex").toUpperCase()));
 });
