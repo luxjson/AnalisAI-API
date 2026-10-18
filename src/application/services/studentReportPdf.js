@@ -107,7 +107,7 @@ function datePt(value) {
 exports.buildStudentReport = ({ student, competencies, attendance, year, yearDays }) => {
   const total = Number(attendance.total_aulas || 0);
   const present = Number(attendance.presencas || 0);
-  const percent = total ? Math.round((present / total) * 100) : Number(student.presenca || 0);
+  const percent = total ? Math.round((present / total) * 100) : null;
   const lines = [
     "AnalisAI | Relatorio pedagogico individual",
     "Painel de Analise de Desempenho por Competencias",
@@ -124,7 +124,7 @@ exports.buildStudentReport = ({ student, competencies, attendance, year, yearDay
     `Faltas: ${Number(attendance.faltas || 0)}`,
     `Faltas justificadas: ${Number(attendance.justificadas || 0)}`,
     `Dias de aula registrados: ${Number(attendance.dias_registrados || 0)}`,
-    `Frequencia calculada: ${percent}%`,
+    `Frequencia calculada: ${percent === null ? "sem registros de aula" : percent + "%"}`,
     "Calculo: presencas divididas pelos periodos de aula registrados. Faltas justificadas permanecem no total de periodos, mas sao contabilizadas separadamente.",
     "",
     "COMPETENCIAS E HABILIDADES",
