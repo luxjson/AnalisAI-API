@@ -297,19 +297,28 @@ exports.buscarAlunos = async (command, outcome) => {
     const turma = ALLOWED_YEARS.includes(command.filters.turma)
       ? command.filters.turma
       : "";
+    let classes = null;
+    if (command.session.userCargo === "Professor") {
+      const assigned = await repository.query(
+        "SELECT turma FROM professor_turmas WHERE professor_id = $1",
+        [command.session.userId],
+      );
+      classes = assigned.rows.map((row) => row.turma);
+      if (!classes.length || (turma && !classes.includes(turma)))
+        return outcome.data({ sucesso: true, total: 0, alunos: [] });
+    }
     let query = repository.buscarAlunosSql1();
     const params = [];
-    if (busca && busca.trim() !== "") {
+    if (busca) {
       params.push(`%${busca.trim().toLowerCase()}%`);
-      query += repository.buscarAlunosSql2(
-        params.length,
-        params.length,
-        params.length,
-      );
+      query += repository.buscarAlunosSql2(params.length, params.length, params.length);
     }
-    if (turma && turma.trim() !== "") {
-      params.push(turma.trim());
+    if (turma) {
+      params.push(turma);
       query += repository.buscarAlunosSql3(params.length);
+    } else if (classes !== null) {
+      params.push(classes);
+      query += ` AND a.ano_escolar = ANY($${params.length}::text[])`;
     }
     query += repository.buscarAlunosSql4();
     const result = await repository.query(query, params);
@@ -319,7 +328,8 @@ exports.buscarAlunos = async (command, outcome) => {
       alunos: result.rows,
     });
   } catch (err) {
-    console.error("Erro ao buscar alunos:", err);
+    if (process.env.NODE_ENV !== "production")
+      console.error("Erro ao buscar alunos:", err.message);
     outcome.code(500).data({
       sucesso: false,
       error: "Erro interno ao realizar busca",
