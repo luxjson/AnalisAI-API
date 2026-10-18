@@ -3,7 +3,7 @@ async function refreshIdentity(req, res, next) {
   try {
     if (req.session.userId) {
       const r = await db.query(
-        "SELECT id,nome,cargo,status,email FROM usuarios WHERE id=$1",
+        "SELECT id,nome,cargo,status,email,onboarding_concluido FROM usuarios WHERE id=$1",
         [req.session.userId],
       );
       const u = r.rows[0];
@@ -21,6 +21,7 @@ async function refreshIdentity(req, res, next) {
         nome: u.nome,
         email: u.email,
         cargo: u.cargo,
+        onboardingConcluido: u.onboarding_concluido === true,
       };
     } else if (req.session.aluno) {
       const r = await db.query(
