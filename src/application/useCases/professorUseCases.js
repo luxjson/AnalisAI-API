@@ -13,11 +13,26 @@ const {
   randomPassword,
   normalizeToEmailName,
 } = require("../../domain/validation");
+async function getAssignedClasses(command) {
+  if (command.session.userCargo !== "Professor") return null;
+  const result = await repository.query(
+    "SELECT turma FROM professor_turmas WHERE professor_id = $1 ORDER BY turma",
+    [command.session.userId],
+  );
+  return result.rows.map((row) => row.turma);
+}
+async function runScopedQuery(command, query, classes) {
+  return classes === null
+    ? repository.query(query)
+    : repository.query(query, [classes]);
+}
 exports.dashboard = async (command, outcome) => {
   try {
-    const alunosResult = await repository.query(repository.dashboardSql1());
-    const alunos = alunosResult.rows;
-    const alunosComNivel = alunos.map((aluno) => {
+    const classes = await getAssignedClasses(command);
+    const scoped = classes !== null;
+    const run = (sql) => runScopedQuery(command, sql, classes);
+    const alunosResult = await run(repository.dashboardSql1(scoped));
+    const alunosComNivel = alunosResult.rows.map((aluno) => {
       let mediaCompetencias = 0;
       if (aluno.competencias && aluno.competencias.length > 0) {
         const soma = aluno.competencias.reduce(
@@ -34,19 +49,16 @@ exports.dashboard = async (command, outcome) => {
       }
       return {
         ...aluno,
-        nivel: nivel,
+        nivel,
         media_competencias: mediaCompetencias.toFixed(1),
       };
     });
-    const rankingGeralResult = await repository.query(
-      repository.dashboardSql2(),
-    );
-    const rankingMedioResult = await repository.query(
-      repository.dashboardSql3(),
-    );
-    const rankingFundamentalResult = await repository.query(
-      repository.dashboardSql4(),
-    );
+    const [rankingGeralResult, rankingMedioResult, rankingFundamentalResult] =
+      await Promise.all([
+        run(repository.dashboardSql2(scoped)),
+        run(repository.dashboardSql3(scoped)),
+        run(repository.dashboardSql4(scoped)),
+      ]);
     const rankingGeral = rankingGeralResult.rows.map((item) => ({
       ...item,
       media: parseFloat(item.media) || 0,
@@ -62,14 +74,16 @@ exports.dashboard = async (command, outcome) => {
     outcome.data({
       user: command.session.user,
       alunos: alunosComNivel,
-      rankingGeral: rankingGeral,
-      rankingMedio: rankingMedio,
-      rankingFundamental: rankingFundamental,
+      rankingGeral,
+      rankingMedio,
+      rankingFundamental,
       userCargo: command.session.userCargo,
       isAdmin: command.session.userCargo === "Admin",
+      turmas: classes || [],
     });
   } catch (err) {
-    console.error(err);
+    if (process.env.NODE_ENV !== "production")
+      console.error("Falha ao carregar o painel do professor:", err.message);
     command.message("error_msg", "Erro ao carregar dados do dashboard");
     outcome.data({
       user: command.session.user,
@@ -77,33 +91,43 @@ exports.dashboard = async (command, outcome) => {
       rankingGeral: [],
       rankingMedio: [],
       rankingFundamental: [],
+      turmas: [],
     });
   }
 };
 exports.editAlunos = async (command, outcome) => {
   try {
-    const result = await repository.query(repository.editAlunosSql1());
-    const competenciasList = await repository.query(
-      repository.editAlunosSql2(),
-    );
+    const classes = await getAssignedClasses(command);
+    const scoped = classes !== null;
+    const [result, competenciasList] = await Promise.all([
+      runScopedQuery(command, repository.editAlunosSql1(scoped), classes),
+      repository.query(repository.editAlunosSql2()),
+    ]);
     outcome.data({
       alunos: result.rows,
       listaCompetencias: competenciasList.rows,
       user: command.session.user,
       userCargo: command.session.userCargo,
       isAdmin: command.session.userCargo === "Admin",
+      turmas: classes || [],
     });
   } catch (err) {
-    console.error("ERRO NO DASHBOARD EDIT:", err);
+    if (process.env.NODE_ENV !== "production")
+      console.error("Falha ao carregar o editor:", err.message);
     command.message("error_msg", "Não foi possível carregar os dados");
     outcome.complete("/dashboard");
   }
 };
 exports.graficos = async (command, outcome) => {
   try {
-    const alunosResult = await repository.query(repository.graficosSql1());
-    const alunos = alunosResult.rows;
-    let total = 0;
+    const classes = await getAssignedClasses(command);
+    const scoped = classes !== null;
+    const result = await runScopedQuery(
+      command,
+      repository.graficosSql1(scoped),
+      classes,
+    );
+    const alunos = result.rows;
     let apto = 0;
     let inapto = 0;
     let somaMedio = 0;
@@ -111,7 +135,6 @@ exports.graficos = async (command, outcome) => {
     let somaFundamental = 0;
     let countFundamental = 0;
     alunos.forEach((aluno) => {
-      total++;
       let mediaCompetencias = 0;
       if (aluno.competencias && aluno.competencias.length > 0) {
         const soma = aluno.competencias.reduce(
@@ -120,23 +143,20 @@ exports.graficos = async (command, outcome) => {
         );
         mediaCompetencias = soma / aluno.competencias.length;
       }
-      if (mediaCompetencias >= 7 && aluno.presenca >= 75) {
-        apto++;
-      } else if (mediaCompetencias < 5 || aluno.presenca < 50) {
-        inapto++;
-      }
-      if (aluno.ano_escolar.includes("MÉDIO")) {
+      if (mediaCompetencias >= 7 && aluno.presenca >= 75) apto++;
+      else if (mediaCompetencias < 5 || aluno.presenca < 50) inapto++;
+      if (aluno.ano_escolar?.includes("MÉDIO")) {
         somaMedio += mediaCompetencias;
         countMedio++;
-      } else if (aluno.ano_escolar.includes("FUNDAMENTAL")) {
+      } else if (aluno.ano_escolar?.includes("FUNDAMENTAL")) {
         somaFundamental += mediaCompetencias;
         countFundamental++;
       }
     });
     const stats = {
-      total: total,
-      apto: apto,
-      inapto: inapto,
+      total: alunos.length,
+      apto,
+      inapto,
       mediaMedio: countMedio > 0 ? (somaMedio / countMedio).toFixed(1) : 0,
       mediaFundamental:
         countFundamental > 0
@@ -148,9 +168,11 @@ exports.graficos = async (command, outcome) => {
       userCargo: command.session.userCargo,
       isAdmin: command.session.userCargo === "Admin",
       user: command.session.user,
+      turmas: classes || [],
     });
   } catch (err) {
-    if (process.env.NODE_ENV !== "production") console.error(err);
+    if (process.env.NODE_ENV !== "production")
+      console.error("Falha ao carregar gráficos:", err.message);
     command.message("error_msg", "Erro ao carregar gráficos");
     outcome.data({
       stats: {
@@ -163,6 +185,7 @@ exports.graficos = async (command, outcome) => {
       user: command.session.user,
       userCargo: command.session.userCargo,
       isAdmin: command.session.userCargo === "Admin",
+      turmas: [],
     });
   }
 };
