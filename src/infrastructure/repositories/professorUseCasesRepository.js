@@ -1,49 +1,57 @@
 const database = require("../database");
+const annualAttendance = `(
+  SELECT CASE WHEN COUNT(*) = 0 THEN NULL
+    ELSE ROUND(100.0 * COUNT(*) FILTER (WHERE fr.status = 'PRESENTE') / COUNT(*))::INTEGER
+  END
+  FROM frequencia_registros fr
+  WHERE fr.aluno_id = a.id
+    AND fr.data_aula >= date_trunc('year', CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo')::DATE
+    AND fr.data_aula < (date_trunc('year', CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo') + INTERVAL '1 year')::DATE
+)`;
 exports.query = (text, parameters) => database.query(text, parameters);
 exports.connect = () => database.connect();
-exports.dashboardSql1 = () => `
-  SELECT a.*, COALESCE((
+exports.dashboardSql1 = (scoped = false) => `
+  SELECT a.*, ${annualAttendance} AS presenca_calculada, COALESCE((
       SELECT json_agg(json_build_object('nota', ac.nota))
       FROM aluno_competencias ac
       WHERE ac.aluno_id = a.id), '[]'::json) as competencias
   FROM alunos a
+  ${scoped ? "WHERE a.ano_escolar = ANY($1::text[])" : ""}
   ORDER BY a.nome ASC
 `;
-exports.dashboardSql2 = () => `
+exports.dashboardSql2 = (scoped = false) => `
   SELECT c.nome, COALESCE(AVG(ac.nota), 0) as media, COUNT(ac.id) as
   total_avaliacoes
   FROM competencias c
-  LEFT
-  JOIN aluno_competencias ac ON c.id = ac.competencia_id
+  LEFT JOIN aluno_competencias ac ON c.id = ac.competencia_id
+  ${scoped ? "LEFT JOIN alunos a ON a.id = ac.aluno_id WHERE a.ano_escolar = ANY($1::text[])" : ""}
   GROUP BY c.id, c.nome HAVING COUNT(ac.id) > 0
   ORDER BY media DESC
 `;
-exports.dashboardSql3 = () => `
+exports.dashboardSql3 = (scoped = false) => `
   SELECT c.nome, COALESCE(AVG(ac.nota), 0) as media, COUNT(ac.id) as
   total_avaliacoes
   FROM competencias c
-  LEFT
-  JOIN aluno_competencias ac ON c.id = ac.competencia_id
-  LEFT
-  JOIN alunos a ON ac.aluno_id = a.id
+  LEFT JOIN aluno_competencias ac ON c.id = ac.competencia_id
+  LEFT JOIN alunos a ON ac.aluno_id = a.id
   WHERE a.ano_escolar LIKE '%MÉDIO%'
+  ${scoped ? "AND a.ano_escolar = ANY($1::text[])" : ""}
   GROUP BY c.id, c.nome HAVING COUNT(ac.id) > 0
   ORDER BY media DESC
 `;
-exports.dashboardSql4 = () => `
+exports.dashboardSql4 = (scoped = false) => `
   SELECT c.nome, COALESCE(AVG(ac.nota), 0) as media, COUNT(ac.id) as
   total_avaliacoes
   FROM competencias c
-  LEFT
-  JOIN aluno_competencias ac ON c.id = ac.competencia_id
-  LEFT
-  JOIN alunos a ON ac.aluno_id = a.id
+  LEFT JOIN aluno_competencias ac ON c.id = ac.competencia_id
+  LEFT JOIN alunos a ON ac.aluno_id = a.id
   WHERE a.ano_escolar LIKE '%FUNDAMENTAL%'
+  ${scoped ? "AND a.ano_escolar = ANY($1::text[])" : ""}
   GROUP BY c.id, c.nome HAVING COUNT(ac.id) > 0
   ORDER BY media DESC
 `;
-exports.editAlunosSql1 = () => `
-  SELECT a.*, COALESCE((
+exports.editAlunosSql1 = (scoped = false) => `
+  SELECT a.*, ${annualAttendance} AS presenca_calculada, COALESCE((
       SELECT json_agg(json_build_object('id', nd.id, 'titulo',
           nd.titulo, 'descricao', nd.descricao, 'valor', nd.valor,
           'data_criacao', nd.data_criacao)
@@ -60,6 +68,7 @@ exports.editAlunosSql1 = () => `
       JOIN competencias c ON ac.competencia_id = c.id
       WHERE ac.aluno_id = a.id), '[]'::json) as competencias
   FROM alunos a
+  ${scoped ? "WHERE a.ano_escolar = ANY($1::text[])" : ""}
   ORDER BY a.id ASC
 `;
 exports.editAlunosSql2 = () => `
@@ -67,12 +76,13 @@ SELECT id, nome, descricao, categoria
 FROM competencias
 ORDER BY id ASC
 `;
-exports.graficosSql1 = () => `
-  SELECT a.*, COALESCE((
+exports.graficosSql1 = (scoped = false) => `
+  SELECT a.*, ${annualAttendance} AS presenca_calculada, COALESCE((
       SELECT json_agg(json_build_object('nota', ac.nota))
       FROM aluno_competencias ac
       WHERE ac.aluno_id = a.id), '[]'::json) as competencias
   FROM alunos a
+  ${scoped ? "WHERE a.ano_escolar = ANY($1::text[])" : ""}
 `;
 exports.alterarSenhaSql1 = () => "SELECT senha FROM usuarios WHERE id = $1";
 exports.alterarSenhaSql2 = () => "UPDATE usuarios SET senha = $1 WHERE id = $2";
