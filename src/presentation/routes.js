@@ -21,14 +21,14 @@ const apiController = require("../application/useCases/apiUseCases");
 const aiController = require("../application/useCases/aiUseCases");
 const pedagogicalController = require("../application/useCases/pedagogicalUseCases");
 
-router.get("/perfil-pedagogico", checkAuth, execute(pedagogicalController.getProfile));
-router.patch("/perfil-pedagogico", checkAuth, execute(pedagogicalController.saveProfile));
-router.get("/frequencia", checkAuth, execute(pedagogicalController.getAttendance));
-router.post("/frequencia", checkAuth, execute(pedagogicalController.saveAttendance));
-router.get("/alunos/:id/relatorio.pdf", checkAnyAuth, execute(pedagogicalController.studentReportPdf));
-router.get("/relatorios/solicitacoes", checkAuth, execute(pedagogicalController.getReportRequests));
-router.post("/relatorios/solicitacoes", checkAuth, execute(pedagogicalController.createReportRequest));
-router.patch("/relatorios/solicitacoes/:id", checkAuth, execute(pedagogicalController.updateReportRequest));
+router.get("/perfil-pedagogico", checkAuth, rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "pedagogical-profile-read" }), execute(pedagogicalController.getProfile));
+router.patch("/perfil-pedagogico", checkAuth, rateLimit({ windowMs: 60 * 1000, max: 10, keyPrefix: "pedagogical-profile-write" }), execute(pedagogicalController.saveProfile));
+router.get("/frequencia", checkAuth, rateLimit({ windowMs: 60 * 1000, max: 120, keyPrefix: "attendance-read" }), execute(pedagogicalController.getAttendance));
+router.post("/frequencia", checkAuth, rateLimit({ windowMs: 60 * 1000, max: 30, keyPrefix: "attendance-write" }), execute(pedagogicalController.saveAttendance));
+router.get("/alunos/:id/relatorio.pdf", checkAnyAuth, rateLimit({ windowMs: 60 * 1000, max: 15, keyPrefix: "student-report-pdf" }), execute(pedagogicalController.studentReportPdf));
+router.get("/relatorios/solicitacoes", checkAuth, rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "report-requests-read" }), execute(pedagogicalController.getReportRequests));
+router.post("/relatorios/solicitacoes", checkAuth, rateLimit({ windowMs: 60 * 1000, max: 15, keyPrefix: "report-requests-write" }), execute(pedagogicalController.createReportRequest));
+router.patch("/relatorios/solicitacoes/:id", checkAuth, rateLimit({ windowMs: 60 * 1000, max: 30, keyPrefix: "report-requests-update" }), execute(pedagogicalController.updateReportRequest));
 
 router.post("/auth/logout", execute(authController.logout));
 router.get(
