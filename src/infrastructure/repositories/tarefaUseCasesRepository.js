@@ -21,7 +21,7 @@ exports.listarSql1 = () => `
   JOIN tarefas_alunos ta ON t.id = ta.tarefa_id
   WHERE 1 = 1
 `;
-exports.listarSql2 = (part0) => ` AND t.turma = ${part0}`;
+exports.listarSql2 = (part0) => " AND t.turma = $" + part0;
 exports.listarSqlScoped = (part0) => ` AND t.turma = ANY(${part0}::text[])`;
 exports.listarSql3 = (part0) => ` AND t.status = $${part0}`;
 exports.listarSql4 = () =>
