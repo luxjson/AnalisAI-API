@@ -19,7 +19,7 @@ exports.dashboard = async (command, outcome) => {
       [alunoId],
     );
     const competencias = competenciasResult.rows;
-    let mediaGeral = 0;
+    let mediaGeral = null;
     if (competencias.length > 0) {
       const soma = competencias.reduce(
         (acc, comp) => acc + parseFloat(comp.nota),
