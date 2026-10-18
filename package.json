@@ -18,22 +18,23 @@
     "check:syntax": "find src scripts tests -type f -name '*.js' -print0 | xargs -0 -n1 node --check"
   },
   "dependencies": {
-    "argon2": "^0.44.0",
+    "argon2": "^0.45.1",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "entities": "^6.0.1",
+    "dotenv": "^18.0.8",
+    "entities": "^8.1.0",
     "exceljs": "^4.4.0",
     "express": "^5.2.1",
     "express-session": "^1.18.2",
     "helmet": "^8.1.0",
     "multer": "^2.0.2",
     "pg": "^8.16.3",
-    "sanitize-html": "^2.17.0",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+    "sanitize-html": "^2.18.1",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
+    "express-rate-limit": "^8.7.1"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.3.14",
+    "@electric-sql/pglite": "^0.5.10",
     "supertest": "^7.1.4"
   },
   "overrides": {
@@ -42,6 +43,6 @@
     }
   },
   "allowScripts": {
-    "argon2@0.44.0": true
+    "argon2@0.45.1": true
   }
 }
