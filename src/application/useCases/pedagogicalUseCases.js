@@ -13,7 +13,7 @@ const ATTENDANCE_STATUSES = new Set(["PRESENTE", "FALTA", "JUSTIFICADA"]);
 const validTime = (value) =>
   typeof value === "string" &&
   /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value);
-const currentYear = () => new Date().getFullYear();
+const currentYear = () => Number(new Intl.DateTimeFormat("en", { timeZone: "America/Sao_Paulo", year: "numeric" }).format(new Date()));
 const currentDate = () =>
   new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Sao_Paulo",
