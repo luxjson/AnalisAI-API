@@ -12,7 +12,8 @@ exports.dashboard = async (command, outcome) => {
       command.message("error_msg", "Aluno não encontrado");
       return outcome.complete("/logout");
     }
-    const aluno = alunoResult.rows[0];
+    const alunoRow = alunoResult.rows[0];
+    const aluno = { ...alunoRow, presenca: alunoRow.presenca_calculada == null ? null : Number(alunoRow.presenca_calculada) };
     const competenciasResult = await repository.query(
       repository.dashboardSql2(),
       [alunoId],
@@ -63,7 +64,8 @@ exports.competencias = async (command, outcome) => {
     const alunoResult = await repository.query(repository.competenciasSql1(), [
       alunoId,
     ]);
-    const aluno = alunoResult.rows[0];
+    const alunoRow = alunoResult.rows[0];
+    const aluno = { ...alunoRow, presenca: alunoRow.presenca_calculada == null ? null : Number(alunoRow.presenca_calculada) };
     const competenciasResult = await repository.query(
       repository.competenciasSql2(),
       [alunoId],
