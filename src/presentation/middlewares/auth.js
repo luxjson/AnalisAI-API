@@ -145,7 +145,7 @@ async function checkAssignedClass(req, res, next) {
         if (!task.rows.length)
           return res.status(404).json({ error: "Tarefa não encontrada." });
         classes.add(task.rows[0].turma);
-      } else if (req.path.startsWith("/alunos/")) {
+      } else if (req.path.startsWith("/alunos/") || req.path.startsWith("/ia/alunos/")) {
         const student = await db.query(
           "SELECT ano_escolar FROM alunos WHERE id = $1 LIMIT 1",
           [routeId],
