@@ -77,6 +77,11 @@ exports.export = async (command, outcome) => {
   const result = scoped
     ? await repository.query(repository.exportSql1(true), [classes])
     : await repository.query(repository.exportSql1());
+  const rows = result.rows.map((row) => ({
+    ...row,
+    presenca:
+      row.presenca_calculada == null ? null : Number(row.presenca_calculada),
+  }));
   outcome.header(
     "Content-Type",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -85,5 +90,5 @@ exports.export = async (command, outcome) => {
     "Content-Disposition",
     'attachment; filename="Relatorio_Completo_AnalisAI.xlsx"',
   );
-  return outcome.binary(await exportWorkbook(result.rows));
+  return outcome.binary(await exportWorkbook(rows));
 };
