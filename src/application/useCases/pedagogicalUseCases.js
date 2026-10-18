@@ -233,8 +233,10 @@ exports.saveAttendance = async (command, outcome) => {
     const justificativa = text(entry?.justificativa || "", 1000) || null;
     if (!id || seen.has(id) || !ATTENDANCE_STATUSES.has(status))
       return outcome.code(400).data({ error: "Cada aluno precisa ter uma situação de frequência válida." });
+    if (status === "JUSTIFICADA" && !justificativa)
+      return outcome.code(400).data({ error: "Informe o motivo da falta justificada." });
     seen.add(id);
-    normalized.push({ id, status, justificativa });
+    normalized.push({ id, status, justificativa: status === "JUSTIFICADA" ? justificativa : null });
   }
 
   const client = await repository.connect();
