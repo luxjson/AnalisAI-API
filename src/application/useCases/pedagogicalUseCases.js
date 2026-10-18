@@ -131,6 +131,8 @@ exports.saveProfile = async (command, outcome) => {
 };
 
 exports.getAttendance = async (command, outcome) => {
+  if (!["Professor", "Admin"].includes(command.session.userCargo))
+    return outcome.code(403).data({ error: "A frequência é acessível apenas ao professor responsável e à administração." });
   const year = Number(command.filters.ano || currentYear());
   if (!Number.isInteger(year) || year < 2000 || year > 2100)
     return outcome.code(400).data({ error: "Ano letivo inválido." });
