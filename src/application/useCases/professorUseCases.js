@@ -41,14 +41,22 @@ exports.dashboard = async (command, outcome) => {
         );
         mediaCompetencias = soma / aluno.competencias.length;
       }
+      const presencaAnual =
+        aluno.presenca_calculada === null || aluno.presenca_calculada === undefined
+          ? null
+          : Number(aluno.presenca_calculada);
       let nivel = "EM DESENVOLVIMENTO";
-      if (mediaCompetencias >= 7 && aluno.presenca >= 75) {
+      if (mediaCompetencias >= 7 && presencaAnual !== null && presencaAnual >= 75) {
         nivel = "APTO";
-      } else if (mediaCompetencias < 5 || aluno.presenca < 50) {
+      } else if (
+        mediaCompetencias < 5 ||
+        (presencaAnual !== null && presencaAnual < 50)
+      ) {
         nivel = "INAPTO";
       }
       return {
         ...aluno,
+        presenca: presencaAnual,
         nivel,
         media_competencias: mediaCompetencias.toFixed(1),
       };
@@ -104,7 +112,13 @@ exports.editAlunos = async (command, outcome) => {
       repository.query(repository.editAlunosSql2()),
     ]);
     outcome.data({
-      alunos: result.rows,
+      alunos: result.rows.map((aluno) => ({
+        ...aluno,
+        presenca:
+          aluno.presenca_calculada === null || aluno.presenca_calculada === undefined
+            ? null
+            : Number(aluno.presenca_calculada),
+      })),
       listaCompetencias: competenciasList.rows,
       user: command.session.user,
       userCargo: command.session.userCargo,
@@ -143,8 +157,12 @@ exports.graficos = async (command, outcome) => {
         );
         mediaCompetencias = soma / aluno.competencias.length;
       }
-      if (mediaCompetencias >= 7 && aluno.presenca >= 75) apto++;
-      else if (mediaCompetencias < 5 || aluno.presenca < 50) inapto++;
+      const presencaAnual =
+        aluno.presenca_calculada === null || aluno.presenca_calculada === undefined
+          ? null
+          : Number(aluno.presenca_calculada);
+      if (mediaCompetencias >= 7 && presencaAnual !== null && presencaAnual >= 75) apto++;
+      else if (mediaCompetencias < 5 || (presencaAnual !== null && presencaAnual < 50)) inapto++;
       if (aluno.ano_escolar?.includes("MÉDIO")) {
         somaMedio += mediaCompetencias;
         countMedio++;
@@ -164,7 +182,7 @@ exports.graficos = async (command, outcome) => {
           : 0,
     };
     outcome.data({
-      stats,
+      stats: { ...stats, semFrequencia: alunos.filter((aluno) => aluno.presenca_calculada == null).length },
       userCargo: command.session.userCargo,
       isAdmin: command.session.userCargo === "Admin",
       user: command.session.user,
