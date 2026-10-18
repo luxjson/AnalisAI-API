@@ -23,7 +23,7 @@ exports.getContaSql1 = () => `
 `;
 exports.getContaSql2 = () =>
   `
-  SELECT nome, email, cargo, data_criacao, ultimo_acesso
+  SELECT nome, email, cargo, foto_perfil, data_criacao, ultimo_acesso
   FROM usuarios
   WHERE id = $1 LIMIT 1
 `;
