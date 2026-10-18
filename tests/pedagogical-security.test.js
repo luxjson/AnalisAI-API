@@ -32,3 +32,15 @@ test("task class filters remain parameterized SQL", () => {
     "class filters must use a PostgreSQL placeholder, never inline a value",
   );
 });
+
+test("the Express IP limiter is mounted before every API route", () => {
+  const source = read("src/presentation/app.js");
+  const limiterImport = source.indexOf('require("express-rate-limit")');
+  const limiterMount = source.indexOf("app.use(apiRateLimit)");
+  const firstRoute = source.indexOf('app.get("/health"');
+  assert.ok(limiterImport >= 0, "standard Express rate limiter must be imported");
+  assert.ok(limiterMount >= 0, "standard Express rate limiter must be mounted");
+  assert.ok(firstRoute >= 0, "health route must be registered");
+  assert.ok(limiterImport < limiterMount, "rate limiter must be created before mounting");
+  assert.ok(limiterMount < firstRoute, "rate limiter must run before route handlers");
+});
