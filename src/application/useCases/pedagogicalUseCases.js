@@ -368,7 +368,11 @@ exports.createReportRequest = async (command, outcome) => {
   const alunoId = command.input?.aluno_id ? integerId(command.input.aluno_id) : null;
   let turma = command.input?.turma || null;
   const mensagem = text(command.input?.mensagem, 1000, { min: 3 });
-  if (!professorId || !mensagem || (command.input?.aluno_id && !alunoId))
+  if (
+    !professorId ||
+    !mensagem ||
+    (command.input?.aluno_id && !alunoId)
+  )
     return outcome.code(400).data({ error: "Informe professor e uma solicitação válida." });
 
   let aluno = null;
@@ -384,6 +388,8 @@ exports.createReportRequest = async (command, outcome) => {
     if (turma !== aluno.ano_escolar)
       return outcome.code(400).data({ error: "A turma selecionada não corresponde ao aluno." });
   }
+  if (!alunoId && !turma)
+    return outcome.code(400).data({ error: "Selecione uma turma ou um aluno para o relatório." });
   if (turma && !ALLOWED_YEARS.includes(turma))
     return outcome.code(400).data({ error: "Turma inválida." });
   const teacher = await repository.query(
@@ -405,11 +411,16 @@ exports.createReportRequest = async (command, outcome) => {
     turma,
     mensagem,
   ]);
-  await repository.query(repository.notifyReportRequestSql(), [
-    professorId,
-    "Nova solicitação de relatório",
-    `${command.session.user || "Coordenação"} solicitou um relatório pedagógico${aluno ? ` de ${aluno.nome}` : turma ? ` para a turma ${turma}` : ""}.`,
-  ]);
+  try {
+    await repository.query(repository.notifyReportRequestSql(), [
+      professorId,
+      "Nova solicitação de relatório",
+      `${command.session.user || "Coordenação"} solicitou um relatório pedagógico${aluno ? ` de ${aluno.nome}` : ` para a turma ${turma}`}.`,
+    ]);
+  } catch (notificationError) {
+    if (process.env.NODE_ENV !== "production")
+      console.warn("Relatório criado, mas a notificação não foi registrada:", notificationError.message);
+  }
   return outcome.data({
     sucesso: true,
     solicitacao: created.rows[0],
