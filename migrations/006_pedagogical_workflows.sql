@@ -16,6 +16,13 @@ CREATE TABLE IF NOT EXISTS professor_turmas (
 CREATE INDEX IF NOT EXISTS idx_professor_turmas_professor
   ON professor_turmas(professor_id, turma);
 
+UPDATE usuarios u
+SET onboarding_concluido = FALSE
+WHERE u.cargo = 'Professor'
+  AND NOT EXISTS (
+    SELECT 1 FROM professor_turmas pt WHERE pt.professor_id = u.id
+  );
+
 CREATE TABLE IF NOT EXISTS frequencia_registros (
   id BIGSERIAL PRIMARY KEY,
   aluno_id INTEGER NOT NULL REFERENCES alunos(id) ON DELETE CASCADE,
