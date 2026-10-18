@@ -87,6 +87,12 @@ for (const file of sourceFiles.filter((item) => item.startsWith(path.join(root, 
   }
 }
 
+const backupSource = fs.readFileSync(path.join(root, "src/application/services/backupService.js"), "utf8");
+const scheduledBackup = backupSource.match(/async function checkAndRunScheduledBackup\(\) \{([\s\S]*?)\n\}/);
+if (!scheduledBackup || !/if \(!status\.enabled\) return null;/.test(scheduledBackup[1])) {
+  errors.push("backupService.js: scheduled backups must honor BACKUP_ENABLED");
+}
+
 const appSource = fs.readFileSync(path.join(root, "src/presentation/app.js"), "utf8");
 if (!(appSource.indexOf("csrfProtection") >= 0 && appSource.indexOf("csrfProtection") < appSource.indexOf('require("./routes")'))) {
   errors.push("app.js: CSRF middleware must be mounted before API routes");
