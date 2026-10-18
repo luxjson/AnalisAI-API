@@ -23,7 +23,7 @@ exports.updateConversationTitleSql1 = () =>
   WHERE id = $2
 `;
 exports.detectGradeActionSql1 = () =>
-  "SELECT id, nome FROM alunos WHERE LOWER(nome) = LOWER($1) LIMIT 2";
+  "SELECT id, nome, ano_escolar FROM alunos WHERE LOWER(nome) = LOWER($1) LIMIT 2";
 exports.detectGradeActionSql2 = () =>
   "SELECT id, nome FROM competencias WHERE LOWER(nome) = LOWER($1) LIMIT 2";
 exports.getConversationHistorySql1 = () =>
@@ -66,7 +66,7 @@ exports.getStudentContextSql3 = () => `
   ORDER BY t.data_entrega DESC NULLS LAST LIMIT 40
 `;
 exports.teacherChatSql1 = () => "update_grade";
-exports.teacherChatSql2 = () => `
+exports.teacherChatSql2 = (scoped = false) => `
   SELECT a.id, a.nome, a.ano_escolar, a.presenca, a.nota, a.nivel,
   COALESCE(json_agg(json_build_object('nome', c.nome, 'nota',
         ac.nota, 'observacoes', ac.observacoes)) FILTER(
@@ -76,16 +76,18 @@ exports.teacherChatSql2 = () => `
   JOIN aluno_competencias ac ON ac.aluno_id = a.id
   LEFT
   JOIN competencias c ON c.id = ac.competencia_id
+  ${scoped ? "WHERE a.ano_escolar = ANY($1::text[])" : ""}
   GROUP BY a.id
   ORDER BY a.nome LIMIT 200
 `;
 exports.teacherChatSql3 = () =>
   "SELECT id, nome, categoria, descricao FROM competencias ORDER BY nome";
-exports.teacherChatSql4 = () => `
+exports.teacherChatSql4 = (scoped = false) => `
   SELECT t.titulo, t.turma, t.data_entrega, ta.status, ta.nota,
   ta.feedback
   FROM tarefas t
   JOIN tarefas_alunos ta ON ta.tarefa_id = t.id
+  ${scoped ? "WHERE t.turma = ANY($1::text[])" : ""}
   ORDER BY t.data_entrega DESC NULLS LAST LIMIT 300
 `;
 exports.updateGradeSql1 = () => "BEGIN";
