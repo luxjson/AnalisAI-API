@@ -33,8 +33,9 @@ exports.dashboard = async (command, outcome) => {
     const run = (sql) => runScopedQuery(command, sql, classes);
     const alunosResult = await run(repository.dashboardSql1(scoped));
     const alunosComNivel = alunosResult.rows.map((aluno) => {
+      const temAvaliacoes = Array.isArray(aluno.competencias) && aluno.competencias.length > 0;
       let mediaCompetencias = 0;
-      if (aluno.competencias && aluno.competencias.length > 0) {
+      if (temAvaliacoes) {
         const soma = aluno.competencias.reduce(
           (acc, comp) => acc + parseFloat(comp.nota),
           0,
@@ -45,12 +46,13 @@ exports.dashboard = async (command, outcome) => {
         aluno.presenca_calculada === null || aluno.presenca_calculada === undefined
           ? null
           : Number(aluno.presenca_calculada);
-      let nivel = "EM DESENVOLVIMENTO";
-      if (mediaCompetencias >= 7 && presencaAnual !== null && presencaAnual >= 75) {
+      let nivel = temAvaliacoes ? "EM DESENVOLVIMENTO" : "SEM AVALIAÇÕES";
+      if (temAvaliacoes && mediaCompetencias >= 7 && presencaAnual !== null && presencaAnual >= 75) {
         nivel = "APTO";
       } else if (
-        mediaCompetencias < 5 ||
-        (presencaAnual !== null && presencaAnual < 50)
+        temAvaliacoes &&
+        (mediaCompetencias < 5 ||
+          (presencaAnual !== null && presencaAnual < 50))
       ) {
         nivel = "INAPTO";
       }
@@ -149,8 +151,9 @@ exports.graficos = async (command, outcome) => {
     let somaFundamental = 0;
     let countFundamental = 0;
     alunos.forEach((aluno) => {
+      const temAvaliacoes = Array.isArray(aluno.competencias) && aluno.competencias.length > 0;
       let mediaCompetencias = 0;
-      if (aluno.competencias && aluno.competencias.length > 0) {
+      if (temAvaliacoes) {
         const soma = aluno.competencias.reduce(
           (acc, comp) => acc + parseFloat(comp.nota),
           0,
@@ -161,8 +164,8 @@ exports.graficos = async (command, outcome) => {
         aluno.presenca_calculada === null || aluno.presenca_calculada === undefined
           ? null
           : Number(aluno.presenca_calculada);
-      if (mediaCompetencias >= 7 && presencaAnual !== null && presencaAnual >= 75) apto++;
-      else if (mediaCompetencias < 5 || (presencaAnual !== null && presencaAnual < 50)) inapto++;
+      if (temAvaliacoes && mediaCompetencias >= 7 && presencaAnual !== null && presencaAnual >= 75) apto++;
+      else if (temAvaliacoes && (mediaCompetencias < 5 || (presencaAnual !== null && presencaAnual < 50))) inapto++;
       if (aluno.ano_escolar?.includes("MÉDIO")) {
         somaMedio += mediaCompetencias;
         countMedio++;
