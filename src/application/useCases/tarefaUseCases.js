@@ -17,8 +17,21 @@ exports.listar = async (command, outcome) => {
     const statusFilter = ALLOWED_TASK_STATUS.includes(command.filters.status)
       ? command.filters.status
       : "";
+    const scoped = command.session.userCargo === "Professor";
+    let classes = null;
+    if (scoped) {
+      const result = await repository.query(
+        "SELECT turma FROM professor_turmas WHERE professor_id = $1 ORDER BY turma",
+        [command.session.userId],
+      );
+      classes = result.rows.map((row) => row.turma);
+    }
     let query = repository.listarSql1();
     const params = [];
+    if (scoped) {
+      params.push(classes);
+      query += repository.listarSqlScoped(params.length);
+    }
     if (turmaFilter) {
       params.push(turmaFilter);
       query += repository.listarSql2(params.length);
@@ -31,8 +44,12 @@ exports.listar = async (command, outcome) => {
     const [tarefasResult, alunosResult, statsResult, competenciasResult] =
       await Promise.all([
         repository.query(query, params),
-        repository.query(repository.listarSql5()),
-        repository.query(repository.listarSql6()),
+        scoped
+          ? repository.query(repository.listarSql5(true), [classes])
+          : repository.query(repository.listarSql5()),
+        scoped
+          ? repository.query(repository.listarSql6(true), [classes])
+          : repository.query(repository.listarSql6()),
         repository.query(repository.listarSql7()),
       ]);
     outcome.data({
@@ -42,13 +59,15 @@ exports.listar = async (command, outcome) => {
       user: command.session.user,
       userCargo: command.session.userCargo,
       listaCompetencias: competenciasResult.rows,
+      turmas: classes || [],
       filtros: {
         turma: turmaFilter,
         status: statusFilter,
       },
     });
   } catch (err) {
-    console.error("Erro ao carregar tarefas:", err);
+    if (process.env.NODE_ENV !== "production")
+      console.error("Erro ao carregar tarefas:", err.message);
     command.message("error_msg", "Erro ao carregar tarefas");
     outcome.complete("/dashboard");
   }
@@ -426,7 +445,18 @@ exports.atualizarStatusAluno = async (command, outcome) => {
 };
 exports.estatisticas = async (command, outcome) => {
   try {
-    const result = await repository.query(repository.estatisticasSql1());
+    if (command.session.userCargo === "Coordenador")
+      return outcome.code(403).data({ error: "Estatísticas de tarefas disponíveis para professores e administradores." });
+    const scoped = command.session.userCargo === "Professor";
+    const classes = scoped
+      ? (await repository.query(
+          "SELECT turma FROM professor_turmas WHERE professor_id = $1",
+          [command.session.userId],
+        )).rows.map((row) => row.turma)
+      : null;
+    const result = scoped
+      ? await repository.query(repository.estatisticasSql1(true), [classes])
+      : await repository.query(repository.estatisticasSql1());
     outcome.data(result.rows[0]);
   } catch (err) {
     console.error("Erro ao buscar estatísticas:", err);
