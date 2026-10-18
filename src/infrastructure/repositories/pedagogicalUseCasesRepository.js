@@ -192,6 +192,12 @@ exports.updateReportRequestSql = () => `
   WHERE id = $3 AND professor_id = $4
   RETURNING id, status, resposta, data_atualizacao
 `;
+exports.updateAnyReportRequestSql = () => `
+  UPDATE solicitacoes_relatorio
+  SET status = $1, resposta = $2, data_atualizacao = CURRENT_TIMESTAMP
+  WHERE id = $3
+  RETURNING id, status, resposta, data_atualizacao
+`;
 exports.notifyReportRequestSql = () => `
   INSERT INTO notificacoes
     (usuario_id, tipo, titulo, mensagem, link, icone, cor)
