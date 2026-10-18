@@ -64,8 +64,7 @@ exports.competencias = async (command, outcome) => {
     const alunoResult = await repository.query(repository.competenciasSql1(), [
       alunoId,
     ]);
-    const alunoRow = alunoResult.rows[0];
-    const aluno = { ...alunoRow, presenca: alunoRow.presenca_calculada == null ? null : Number(alunoRow.presenca_calculada) };
+    const aluno = alunoResult.rows[0];
     const competenciasResult = await repository.query(
       repository.competenciasSql2(),
       [alunoId],
@@ -92,7 +91,13 @@ exports.evolucao = async (command, outcome) => {
     const alunoResult = await repository.query(repository.evolucaoSql1(), [
       alunoId,
     ]);
-    const aluno = alunoResult.rows[0];
+    const alunoRow = alunoResult.rows[0];
+    const aluno = {
+      ...alunoRow,
+      presenca: alunoRow?.presenca_calculada == null
+        ? null
+        : Number(alunoRow.presenca_calculada),
+    };
     const competenciasResult = await repository.query(
       repository.evolucaoSql2(),
       [alunoId],
