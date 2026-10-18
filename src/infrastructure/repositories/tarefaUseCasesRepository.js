@@ -21,22 +21,30 @@ exports.listarSql1 = () => `
   JOIN tarefas_alunos ta ON t.id = ta.tarefa_id
   WHERE 1 = 1
 `;
-exports.listarSql2 = (part0) => ` AND t.turma = $${part0}`;
+exports.listarSql2 = (part0) => ` AND t.turma = ${part0}`;
+exports.listarSqlScoped = (part0) => ` AND t.turma = ANY(${part0}::text[])`;
 exports.listarSql3 = (part0) => ` AND t.status = $${part0}`;
 exports.listarSql4 = () =>
   ` GROUP BY t.id, u.nome ORDER BY CASE WHEN t.status = 'ATIVA' THEN 1 ELSE 2 END, t.data_criacao DESC`;
-exports.listarSql5 = () =>
-  "SELECT id, nome, ano_escolar FROM alunos ORDER BY nome ASC";
-exports.listarSql6 = () => `
+exports.listarSql5 = (scoped = false) => `
+  SELECT id, nome, ano_escolar
+  FROM alunos
+  ${scoped ? "WHERE ano_escolar = ANY($1::text[])" : ""}
+  ORDER BY nome ASC
+`;
+exports.listarSql6 = (scoped = false) => `
   SELECT COUNT(*) as total, COUNT(CASE
     WHEN status = 'ATIVA' THEN
     1 END) as ativas, COUNT(CASE
     WHEN data_entrega < CURRENT_DATE AND status = 'ATIVA' THEN
     1 END) as atrasadas,(
     SELECT COUNT(*)
-    FROM tarefas_alunos
-    WHERE status = 'ENTREGUE') as aguardando_correcao
+    FROM tarefas_alunos ta
+    JOIN tarefas t ON t.id = ta.tarefa_id
+    WHERE ta.status = 'ENTREGUE'
+    ${scoped ? "AND t.turma = ANY($1::text[])" : ""}) as aguardando_correcao
   FROM tarefas
+  ${scoped ? "WHERE turma = ANY($1::text[])" : ""}
 `;
 exports.listarSql7 = () =>
   "SELECT id, nome FROM competencias ORDER BY nome ASC";
@@ -149,7 +157,7 @@ exports.atualizarStatusAlunoSql1 = () =>
     WHERE t.id = tarefa_id AND (t.criado_por = $4 OR $5))
   RETURNING id
 `;
-exports.estatisticasSql1 = () => `
+exports.estatisticasSql1 = (scoped = false) => `
   SELECT COUNT(*) as total, COUNT(CASE
     WHEN status = 'ATIVA' THEN
     1 END) as ativas, COUNT(CASE
@@ -158,4 +166,5 @@ exports.estatisticasSql1 = () => `
     WHEN prioridade = 'ALTA' AND status = 'ATIVA' THEN
     1 END) as prioridade_alta
   FROM tarefas
+  ${scoped ? "WHERE turma = ANY($1::text[])" : ""}
 `;
