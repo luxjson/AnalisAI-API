@@ -1,5 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const RateLimit = require("express-rate-limit");
+const globalRateLimit = RateLimit({
+  windowMs: 60 * 1000,
+  limit: 300,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+});
+router.use(globalRateLimit);
 const execute = require("./execute");
 const {
   checkAuth,
