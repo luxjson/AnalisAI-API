@@ -17,6 +17,16 @@ const calendarioController = require("../application/useCases/calendarioUseCases
 const adminController = require("../application/useCases/adminUseCases");
 const apiController = require("../application/useCases/apiUseCases");
 const aiController = require("../application/useCases/aiUseCases");
+const pedagogicalController = require("../application/useCases/pedagogicalUseCases");
+
+router.get("/perfil-pedagogico", checkAuth, execute(pedagogicalController.getProfile));
+router.patch("/perfil-pedagogico", checkAuth, execute(pedagogicalController.saveProfile));
+router.get("/frequencia", checkAuth, execute(pedagogicalController.getAttendance));
+router.post("/frequencia", checkAuth, execute(pedagogicalController.saveAttendance));
+router.get("/alunos/:id/relatorio.pdf", checkAnyAuth, execute(pedagogicalController.studentReportPdf));
+router.get("/relatorios/solicitacoes", checkAuth, execute(pedagogicalController.getReportRequests));
+router.post("/relatorios/solicitacoes", checkAuth, execute(pedagogicalController.createReportRequest));
+router.patch("/relatorios/solicitacoes/:id", checkAuth, execute(pedagogicalController.updateReportRequest));
 
 router.post("/auth/logout", execute(authController.logout));
 router.get(
