@@ -5,8 +5,8 @@ const annualAttendance = `(
   END
   FROM frequencia_registros fr
   WHERE fr.aluno_id = a.id
-    AND fr.data_aula >= date_trunc('year', CURRENT_DATE)::DATE
-    AND fr.data_aula < (date_trunc('year', CURRENT_DATE) + INTERVAL '1 year')::DATE
+    AND fr.data_aula >= date_trunc('year', CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo')::DATE
+    AND fr.data_aula < (date_trunc('year', CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo') + INTERVAL '1 year')::DATE
 )`;
 exports.query = (text, parameters) => database.query(text, parameters);
 exports.connect = () => database.connect();
