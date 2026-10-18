@@ -387,26 +387,10 @@ exports.deletarCompetencia = async (command, outcome) => {
     outcome.complete("/dashboard/edit");
   }
 };
-exports.atualizarPresenca = async (command, outcome) => {
-  const aluno_id = integerId(command.input.aluno_id);
-  const presenca = numberInRange(command.input.presenca, 0, 100);
-  if (!aluno_id || presenca === null) {
-    command.message("error_msg", "Dados de presença inválidos");
-    return outcome.complete("/dashboard/edit");
-  }
-  try {
-    await repository.query(repository.atualizarPresencaSql1(), [
-      presenca,
-      aluno_id,
-    ]);
-    command.message("success_msg", "Presença atualizada com sucesso!");
-    outcome.complete("/dashboard/edit");
-  } catch (err) {
-    console.error(err);
-    command.message("error_msg", "Erro ao atualizar presença");
-    outcome.complete("/dashboard/edit");
-  }
-};
+exports.atualizarPresenca = async (_command, outcome) =>
+  outcome.code(410).data({
+    error: "A frequência não pode mais ser alterada como percentual manual. Registre presença, falta ou justificativa por data e período no portal de frequência.",
+  });
 exports.addAluno = async (command, outcome) => {
   const nome = personName(command.input?.nome);
   const ano_escolar = ALLOWED_YEARS.includes(command.input?.ano_escolar)
