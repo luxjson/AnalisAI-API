@@ -179,8 +179,17 @@ async function getStudentContext(alunoId) {
     repository.query(repository.getStudentContextSql2(), [alunoId]),
     repository.query(repository.getStudentContextSql3(), [alunoId]),
   ]);
+  const studentRow = student.rows[0];
   return {
-    aluno: student.rows[0],
+    aluno: studentRow
+      ? {
+          ...studentRow,
+          presenca:
+            studentRow.presenca_calculada == null
+              ? null
+              : Number(studentRow.presenca_calculada),
+        }
+      : null,
     competencias: competencies.rows,
     tarefas: tasks.rows,
   };
@@ -306,7 +315,13 @@ exports.teacherChat = async (command, outcome) => {
         : repository.query(repository.teacherChatSql4(true), [classes]),
     ]);
     const context = {
-      alunos: students.rows,
+      alunos: students.rows.map((student) => ({
+        ...student,
+        presenca:
+          student.presenca_calculada == null
+            ? null
+            : Number(student.presenca_calculada),
+      })),
       competencias: competencies.rows,
       tarefas: tasks.rows,
     };
