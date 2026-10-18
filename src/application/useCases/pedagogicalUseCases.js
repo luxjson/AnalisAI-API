@@ -263,7 +263,7 @@ exports.saveAttendance = async (command, outcome) => {
         entry.justificativa,
         userId,
       ]);
-    await client.query(repository.refreshAttendancePercentagesSql(), [submitted]);
+    await client.query(repository.refreshAttendancePercentagesSql(), [submitted, Number(dataAula.slice(0, 4))]);
     await client.query("COMMIT");
     return outcome.data({
       sucesso: true,
