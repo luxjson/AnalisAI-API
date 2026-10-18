@@ -1,8 +1,17 @@
 const database = require("../database");
+const annualAttendance = `(
+  SELECT CASE WHEN COUNT(*) = 0 THEN NULL
+    ELSE ROUND(100.0 * COUNT(*) FILTER (WHERE fr.status = 'PRESENTE') / COUNT(*))::INTEGER
+  END
+  FROM frequencia_registros fr
+  WHERE fr.aluno_id = a.id
+    AND fr.data_aula >= date_trunc('year', CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo')::DATE
+    AND fr.data_aula < (date_trunc('year', CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo') + INTERVAL '1 year')::DATE
+)`;
 exports.query = (text, parameters) => database.query(text, parameters);
 exports.connect = () => database.connect();
 exports.dashboardSql1 = () => `
-  SELECT a.*, al.matricula, al.email, al.status, TO_CHAR(al.data_criacao,
+  SELECT a.*, ${annualAttendance} AS presenca_calculada, al.matricula, al.email, al.status, TO_CHAR(al.data_criacao,
     'DD/MM/YYYY') as data_cadastro
   FROM alunos a
   JOIN alunos_login al ON a.id = al.aluno_id
@@ -15,6 +24,18 @@ exports.dashboardSql2 = () => `
   JOIN competencias c ON ac.competencia_id = c.id
   WHERE ac.aluno_id = $1
   ORDER BY ac.data_registro DESC
+`;
+exports.dashboardAttendanceSql = () => `
+  SELECT
+    COUNT(*)::INTEGER AS total_aulas,
+    COUNT(*) FILTER (WHERE status = 'PRESENTE')::INTEGER AS presencas,
+    COUNT(*) FILTER (WHERE status = 'FALTA')::INTEGER AS faltas,
+    COUNT(*) FILTER (WHERE status = 'JUSTIFICADA')::INTEGER AS justificadas,
+    COUNT(DISTINCT data_aula)::INTEGER AS dias_registrados
+  FROM frequencia_registros
+  WHERE aluno_id = $1
+    AND data_aula >= make_date($2::INTEGER, 1, 1)
+    AND data_aula < make_date($2::INTEGER + 1, 1, 1)
 `;
 exports.dashboardSql3 = () =>
   `
@@ -42,7 +63,7 @@ exports.competenciasSql3 = () => `
   WHERE aluno_id = $1
 `;
 exports.evolucaoSql1 = () =>
-  "SELECT nome, ano_escolar, presenca FROM alunos WHERE id = $1";
+  `SELECT nome, ano_escolar, presenca, ${annualAttendance} AS presenca_calculada FROM alunos a WHERE id = $1`;
 exports.evolucaoSql2 = () => `
   SELECT ac.*, c.nome, c.descricao, c.categoria, TO_CHAR(ac.data_registro,
     'DD/MM/YYYY') as data_formatada

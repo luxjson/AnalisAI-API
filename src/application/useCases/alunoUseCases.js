@@ -2,6 +2,14 @@ const repository = require("../../infrastructure/repositories/alunoUseCasesRepos
 const { criarNotificacao } = require("../services/notificationService");
 const passwords = require("../../infrastructure/passwords");
 const { text, integerId, password } = require("../../domain/validation");
+const { calendarDaysInYear } = require("../../domain/attendance");
+const currentYear = () =>
+  Number(
+    new Intl.DateTimeFormat("en", {
+      timeZone: "America/Sao_Paulo",
+      year: "numeric",
+    }).format(new Date()),
+  );
 exports.dashboard = async (command, outcome) => {
   try {
     const alunoId = command.session.aluno.id;
@@ -12,13 +20,28 @@ exports.dashboard = async (command, outcome) => {
       command.message("error_msg", "Aluno não encontrado");
       return outcome.complete("/logout");
     }
-    const aluno = alunoResult.rows[0];
-    const competenciasResult = await repository.query(
-      repository.dashboardSql2(),
-      [alunoId],
-    );
+    const alunoRow = alunoResult.rows[0];
+    const aluno = { ...alunoRow, presenca: alunoRow.presenca_calculada == null ? null : Number(alunoRow.presenca_calculada) };
+    const attendanceYear = currentYear();
+    const [competenciasResult, attendanceResult] = await Promise.all([
+      repository.query(repository.dashboardSql2(), [alunoId]),
+      repository.query(repository.dashboardAttendanceSql(), [
+        alunoId,
+        attendanceYear,
+      ]),
+    ]);
     const competencias = competenciasResult.rows;
-    let mediaGeral = 0;
+    const attendance = attendanceResult.rows[0] || {};
+    const frequenciaResumo = {
+      ano: attendanceYear,
+      diasNoAno: calendarDaysInYear(attendanceYear),
+      total_aulas: Number(attendance.total_aulas || 0),
+      presencas: Number(attendance.presencas || 0),
+      faltas: Number(attendance.faltas || 0),
+      justificadas: Number(attendance.justificadas || 0),
+      dias_registrados: Number(attendance.dias_registrados || 0),
+    };
+    let mediaGeral = null;
     if (competencias.length > 0) {
       const soma = competencias.reduce(
         (acc, comp) => acc + parseFloat(comp.nota),
@@ -48,6 +71,7 @@ exports.dashboard = async (command, outcome) => {
       competencias,
       mediaGeral,
       categorias,
+      frequenciaResumo,
       success_msg: command.message("success_msg"),
       error_msg: command.message("error_msg"),
     });
@@ -90,7 +114,13 @@ exports.evolucao = async (command, outcome) => {
     const alunoResult = await repository.query(repository.evolucaoSql1(), [
       alunoId,
     ]);
-    const aluno = alunoResult.rows[0];
+    const alunoRow = alunoResult.rows[0];
+    const aluno = {
+      ...alunoRow,
+      presenca: alunoRow?.presenca_calculada == null
+        ? null
+        : Number(alunoRow.presenca_calculada),
+    };
     const competenciasResult = await repository.query(
       repository.evolucaoSql2(),
       [alunoId],

@@ -13,40 +13,62 @@ const {
   randomPassword,
   normalizeToEmailName,
 } = require("../../domain/validation");
+async function getAssignedClasses(command) {
+  if (command.session.userCargo !== "Professor") return null;
+  const result = await repository.query(
+    "SELECT turma FROM professor_turmas WHERE professor_id = $1 ORDER BY turma",
+    [command.session.userId],
+  );
+  return result.rows.map((row) => row.turma);
+}
+async function runScopedQuery(command, query, classes) {
+  return classes === null
+    ? repository.query(query)
+    : repository.query(query, [classes]);
+}
 exports.dashboard = async (command, outcome) => {
   try {
-    const alunosResult = await repository.query(repository.dashboardSql1());
-    const alunos = alunosResult.rows;
-    const alunosComNivel = alunos.map((aluno) => {
+    const classes = await getAssignedClasses(command);
+    const scoped = classes !== null;
+    const run = (sql) => runScopedQuery(command, sql, classes);
+    const alunosResult = await run(repository.dashboardSql1(scoped));
+    const alunosComNivel = alunosResult.rows.map((aluno) => {
+      const temAvaliacoes = Array.isArray(aluno.competencias) && aluno.competencias.length > 0;
       let mediaCompetencias = 0;
-      if (aluno.competencias && aluno.competencias.length > 0) {
+      if (temAvaliacoes) {
         const soma = aluno.competencias.reduce(
           (acc, comp) => acc + parseFloat(comp.nota),
           0,
         );
         mediaCompetencias = soma / aluno.competencias.length;
       }
-      let nivel = "EM DESENVOLVIMENTO";
-      if (mediaCompetencias >= 7 && aluno.presenca >= 75) {
+      const presencaAnual =
+        aluno.presenca_calculada === null || aluno.presenca_calculada === undefined
+          ? null
+          : Number(aluno.presenca_calculada);
+      let nivel = temAvaliacoes ? "EM DESENVOLVIMENTO" : "SEM AVALIAÇÕES";
+      if (temAvaliacoes && mediaCompetencias >= 7 && presencaAnual !== null && presencaAnual >= 75) {
         nivel = "APTO";
-      } else if (mediaCompetencias < 5 || aluno.presenca < 50) {
+      } else if (
+        temAvaliacoes &&
+        (mediaCompetencias < 5 ||
+          (presencaAnual !== null && presencaAnual < 50))
+      ) {
         nivel = "INAPTO";
       }
       return {
         ...aluno,
-        nivel: nivel,
+        presenca: presencaAnual,
+        nivel,
         media_competencias: mediaCompetencias.toFixed(1),
       };
     });
-    const rankingGeralResult = await repository.query(
-      repository.dashboardSql2(),
-    );
-    const rankingMedioResult = await repository.query(
-      repository.dashboardSql3(),
-    );
-    const rankingFundamentalResult = await repository.query(
-      repository.dashboardSql4(),
-    );
+    const [rankingGeralResult, rankingMedioResult, rankingFundamentalResult] =
+      await Promise.all([
+        run(repository.dashboardSql2(scoped)),
+        run(repository.dashboardSql3(scoped)),
+        run(repository.dashboardSql4(scoped)),
+      ]);
     const rankingGeral = rankingGeralResult.rows.map((item) => ({
       ...item,
       media: parseFloat(item.media) || 0,
@@ -62,14 +84,16 @@ exports.dashboard = async (command, outcome) => {
     outcome.data({
       user: command.session.user,
       alunos: alunosComNivel,
-      rankingGeral: rankingGeral,
-      rankingMedio: rankingMedio,
-      rankingFundamental: rankingFundamental,
+      rankingGeral,
+      rankingMedio,
+      rankingFundamental,
       userCargo: command.session.userCargo,
       isAdmin: command.session.userCargo === "Admin",
+      turmas: classes || [],
     });
   } catch (err) {
-    console.error(err);
+    if (process.env.NODE_ENV !== "production")
+      console.error("Falha ao carregar o painel do professor:", err.message);
     command.message("error_msg", "Erro ao carregar dados do dashboard");
     outcome.data({
       user: command.session.user,
@@ -77,33 +101,49 @@ exports.dashboard = async (command, outcome) => {
       rankingGeral: [],
       rankingMedio: [],
       rankingFundamental: [],
+      turmas: [],
     });
   }
 };
 exports.editAlunos = async (command, outcome) => {
   try {
-    const result = await repository.query(repository.editAlunosSql1());
-    const competenciasList = await repository.query(
-      repository.editAlunosSql2(),
-    );
+    const classes = await getAssignedClasses(command);
+    const scoped = classes !== null;
+    const [result, competenciasList] = await Promise.all([
+      runScopedQuery(command, repository.editAlunosSql1(scoped), classes),
+      repository.query(repository.editAlunosSql2()),
+    ]);
     outcome.data({
-      alunos: result.rows,
+      alunos: result.rows.map((aluno) => ({
+        ...aluno,
+        presenca:
+          aluno.presenca_calculada === null || aluno.presenca_calculada === undefined
+            ? null
+            : Number(aluno.presenca_calculada),
+      })),
       listaCompetencias: competenciasList.rows,
       user: command.session.user,
       userCargo: command.session.userCargo,
       isAdmin: command.session.userCargo === "Admin",
+      turmas: classes || [],
     });
   } catch (err) {
-    console.error("ERRO NO DASHBOARD EDIT:", err);
+    if (process.env.NODE_ENV !== "production")
+      console.error("Falha ao carregar o editor:", err.message);
     command.message("error_msg", "Não foi possível carregar os dados");
     outcome.complete("/dashboard");
   }
 };
 exports.graficos = async (command, outcome) => {
   try {
-    const alunosResult = await repository.query(repository.graficosSql1());
-    const alunos = alunosResult.rows;
-    let total = 0;
+    const classes = await getAssignedClasses(command);
+    const scoped = classes !== null;
+    const result = await runScopedQuery(
+      command,
+      repository.graficosSql1(scoped),
+      classes,
+    );
+    const alunos = result.rows;
     let apto = 0;
     let inapto = 0;
     let somaMedio = 0;
@@ -111,32 +151,33 @@ exports.graficos = async (command, outcome) => {
     let somaFundamental = 0;
     let countFundamental = 0;
     alunos.forEach((aluno) => {
-      total++;
+      const temAvaliacoes = Array.isArray(aluno.competencias) && aluno.competencias.length > 0;
       let mediaCompetencias = 0;
-      if (aluno.competencias && aluno.competencias.length > 0) {
+      if (temAvaliacoes) {
         const soma = aluno.competencias.reduce(
           (acc, comp) => acc + parseFloat(comp.nota),
           0,
         );
         mediaCompetencias = soma / aluno.competencias.length;
       }
-      if (mediaCompetencias >= 7 && aluno.presenca >= 75) {
-        apto++;
-      } else if (mediaCompetencias < 5 || aluno.presenca < 50) {
-        inapto++;
-      }
-      if (aluno.ano_escolar.includes("MÉDIO")) {
+      const presencaAnual =
+        aluno.presenca_calculada === null || aluno.presenca_calculada === undefined
+          ? null
+          : Number(aluno.presenca_calculada);
+      if (temAvaliacoes && mediaCompetencias >= 7 && presencaAnual !== null && presencaAnual >= 75) apto++;
+      else if (temAvaliacoes && (mediaCompetencias < 5 || (presencaAnual !== null && presencaAnual < 50))) inapto++;
+      if (aluno.ano_escolar?.includes("MÉDIO")) {
         somaMedio += mediaCompetencias;
         countMedio++;
-      } else if (aluno.ano_escolar.includes("FUNDAMENTAL")) {
+      } else if (aluno.ano_escolar?.includes("FUNDAMENTAL")) {
         somaFundamental += mediaCompetencias;
         countFundamental++;
       }
     });
     const stats = {
-      total: total,
-      apto: apto,
-      inapto: inapto,
+      total: alunos.length,
+      apto,
+      inapto,
       mediaMedio: countMedio > 0 ? (somaMedio / countMedio).toFixed(1) : 0,
       mediaFundamental:
         countFundamental > 0
@@ -144,13 +185,15 @@ exports.graficos = async (command, outcome) => {
           : 0,
     };
     outcome.data({
-      stats,
+      stats: { ...stats, semFrequencia: alunos.filter((aluno) => aluno.presenca_calculada == null).length },
       userCargo: command.session.userCargo,
       isAdmin: command.session.userCargo === "Admin",
       user: command.session.user,
+      turmas: classes || [],
     });
   } catch (err) {
-    if (process.env.NODE_ENV !== "production") console.error(err);
+    if (process.env.NODE_ENV !== "production")
+      console.error("Falha ao carregar gráficos:", err.message);
     command.message("error_msg", "Erro ao carregar gráficos");
     outcome.data({
       stats: {
@@ -163,6 +206,7 @@ exports.graficos = async (command, outcome) => {
       user: command.session.user,
       userCargo: command.session.userCargo,
       isAdmin: command.session.userCargo === "Admin",
+      turmas: [],
     });
   }
 };
@@ -364,26 +408,10 @@ exports.deletarCompetencia = async (command, outcome) => {
     outcome.complete("/dashboard/edit");
   }
 };
-exports.atualizarPresenca = async (command, outcome) => {
-  const aluno_id = integerId(command.input.aluno_id);
-  const presenca = numberInRange(command.input.presenca, 0, 100);
-  if (!aluno_id || presenca === null) {
-    command.message("error_msg", "Dados de presença inválidos");
-    return outcome.complete("/dashboard/edit");
-  }
-  try {
-    await repository.query(repository.atualizarPresencaSql1(), [
-      presenca,
-      aluno_id,
-    ]);
-    command.message("success_msg", "Presença atualizada com sucesso!");
-    outcome.complete("/dashboard/edit");
-  } catch (err) {
-    console.error(err);
-    command.message("error_msg", "Erro ao atualizar presença");
-    outcome.complete("/dashboard/edit");
-  }
-};
+exports.atualizarPresenca = async (_command, outcome) =>
+  outcome.code(410).data({
+    error: "A frequência não pode mais ser alterada como percentual manual. Registre presença, falta ou justificativa por data e período no portal de frequência.",
+  });
 exports.addAluno = async (command, outcome) => {
   const nome = personName(command.input?.nome);
   const ano_escolar = ALLOWED_YEARS.includes(command.input?.ano_escolar)
