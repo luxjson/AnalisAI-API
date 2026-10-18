@@ -75,6 +75,8 @@ function checkAdmin(req, res, next) {
     : res.status(403).json({ error: "Acesso administrativo necessário." });
 }
 function checkTeacherOrAdmin(req, res, next) {
+  if (!req.session.userId)
+    return res.status(401).json({ error: "Acesso de professor necessário." });
   return ["Professor", "Admin"].includes(req.session.userCargo)
     ? next()
     : res.status(403).json({ error: "Esta operação é exclusiva de professores e administradores." });
