@@ -74,10 +74,16 @@ function checkAdmin(req, res, next) {
     ? next()
     : res.status(403).json({ error: "Acesso administrativo necessário." });
 }
+function checkTeacherOrAdmin(req, res, next) {
+  return ["Professor", "Admin"].includes(req.session.userCargo)
+    ? next()
+    : res.status(403).json({ error: "Esta operação é exclusiva de professores e administradores." });
+}
 module.exports = {
   refreshIdentity,
   checkAuth,
   checkAlunoAuth,
   checkAnyAuth,
   checkAdmin,
+  checkTeacherOrAdmin,
 };
