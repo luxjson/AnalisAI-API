@@ -1,4 +1,13 @@
 const database = require("../database");
+const annualAttendance = `(
+  SELECT CASE WHEN COUNT(*) = 0 THEN NULL
+    ELSE ROUND(100.0 * COUNT(*) FILTER (WHERE fr.status = 'PRESENTE') / COUNT(*))::INTEGER
+  END
+  FROM frequencia_registros fr
+  WHERE fr.aluno_id = a.id
+    AND fr.data_aula >= date_trunc('year', CURRENT_DATE)::DATE
+    AND fr.data_aula < (date_trunc('year', CURRENT_DATE) + INTERVAL '1 year')::DATE
+)`;
 exports.query = (text, parameters) => database.query(text, parameters);
 exports.connect = () => database.connect();
 exports.createConversationSql1 = (part0) =>
@@ -48,7 +57,7 @@ exports.historySql2 = () =>
   ORDER BY data_criacao ASC
 `;
 exports.getStudentContextSql1 = () =>
-  "SELECT nome, ano_escolar, idade, presenca, nota, nivel FROM alunos WHERE id = $1";
+  `SELECT nome, ano_escolar, idade, presenca, ${annualAttendance} AS presenca_calculada, nota, nivel FROM alunos a WHERE a.id = $1`;
 exports.getStudentContextSql2 = () => `
   SELECT c.nome, c.categoria, ac.nota, ac.observacoes, TO_CHAR(ac.data_registro,
     'DD/MM/YYYY') AS data
@@ -67,7 +76,7 @@ exports.getStudentContextSql3 = () => `
 `;
 exports.teacherChatSql1 = () => "update_grade";
 exports.teacherChatSql2 = (scoped = false) => `
-  SELECT a.id, a.nome, a.ano_escolar, a.presenca, a.nota, a.nivel,
+  SELECT a.id, a.nome, a.ano_escolar, a.presenca, ${annualAttendance} AS presenca_calculada, a.nota, a.nivel,
   COALESCE(json_agg(json_build_object('nome', c.nome, 'nota',
         ac.nota, 'observacoes', ac.observacoes)) FILTER(
       WHERE c.id IS NOT NULL), '[]') AS competencias
