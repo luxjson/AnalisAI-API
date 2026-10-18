@@ -100,6 +100,20 @@ exports.saveProfile = async (command, outcome) => {
   const client = await repository.connect();
   try {
     await client.query("BEGIN");
+    const existing = await client.query(
+      "SELECT onboarding_concluido FROM usuarios WHERE id = $1 FOR UPDATE",
+      [userId],
+    );
+    if (!existing.rows.length) {
+      await client.query("ROLLBACK");
+      return outcome.code(404).data({ error: "Conta não encontrada." });
+    }
+    if (cargo === "Professor" && existing.rows[0].onboarding_concluido === true) {
+      await client.query("ROLLBACK");
+      return outcome.code(409).data({
+        error: "A configuração inicial já foi concluída. Para mudar suas turmas, solicite a atualização à administração.",
+      });
+    }
     const saved = await client.query(
       repository.saveProfileSql(),
       [nome, photo, userId],
