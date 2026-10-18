@@ -227,6 +227,7 @@ exports.saveAttendance = async (command, outcome) => {
   const userId = integerId(command.session.userId);
   const turma = command.input?.turma;
   const dataAula = dateOnly(command.input?.data);
+  const year = Number(dataAula?.slice(0, 4));
   const inicio = command.input?.horario_inicio;
   const fim = command.input?.horario_fim;
   const entries = command.input?.alunos;
@@ -234,6 +235,9 @@ exports.saveAttendance = async (command, outcome) => {
     !userId ||
     !ALLOWED_YEARS.includes(turma) ||
     !dataAula ||
+    !Number.isInteger(year) ||
+    year < 2000 ||
+    year > 2100 ||
     !validTime(inicio) ||
     !validTime(fim) ||
     inicio >= fim ||
@@ -285,7 +289,7 @@ exports.saveAttendance = async (command, outcome) => {
         entry.justificativa,
         userId,
       ]);
-    await client.query(repository.refreshAttendancePercentagesSql(), [submitted, Number(dataAula.slice(0, 4))]);
+    await client.query(repository.refreshAttendancePercentagesSql(), [submitted, year]);
     await client.query("COMMIT");
     return outcome.data({
       sucesso: true,
