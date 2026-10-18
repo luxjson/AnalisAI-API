@@ -23,7 +23,7 @@ A API confere as turmas atribuídas no servidor; ocultar um link na interface n�
 4. Não utiliza os fluxos operacionais de lançamento de nota, frequência, criação de tarefas ou gestão diária do professor.
 
 ### Administrador
-Pode gerenciar usuários e acessar os fluxos gerais da instituição. As operações administrativas e de exclusão continuam protegidas por autorização específica.
+Pode gerenciar usuários, definir ou alterar as turmas atribuídas aos professores na Gestão de Usuários e acessar os fluxos gerais da instituição. A lista de turmas do professor é validada no servidor e não pode ser ampliada pelo próprio professor depois da configuração inicial. As operações administrativas e de exclusão continuam protegidas por autorização específica.
 
 ### Aluno
 Consulta o próprio painel, competências, evolução, tarefas e dados de frequência disponibilizados. O endpoint do relatório em PDF valida que a conta de aluno só baixe seu próprio documento.
