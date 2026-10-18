@@ -90,16 +90,19 @@ router.post("/tarefas", checkTeacherOrAdmin, checkAssignedClass, execute(tarefaC
 router.post(
   "/tarefas/avaliacoes",
   checkTeacherOrAdmin,
+  checkAssignedClass,
   execute(tarefaController.avaliarAluno),
 );
 router.post(
   "/tarefas/devolucoes",
   checkTeacherOrAdmin,
+  checkAssignedClass,
   execute(tarefaController.devolverAluno),
 );
 router.patch(
   "/tarefas/atribuicoes/status",
   checkTeacherOrAdmin,
+  checkAssignedClass,
   execute(tarefaController.atualizarStatusAluno),
 );
 router.get(
@@ -362,6 +365,7 @@ router.post(
 router.post(
   "/ia/alunos/:id/analises",
   checkTeacherOrAdmin,
+  checkAssignedClass,
   rateLimit({ windowMs: 60 * 1000, max: 20, keyPrefix: "ai-student-analysis" }),
   execute(aiController.analyzeStudent),
 );
