@@ -260,6 +260,7 @@ async function getBackupFile(filename) {
 }
 async function checkAndRunScheduledBackup() {
   const status = await getBackupStatus();
+  if (!status.enabled) return null;
   if (
     !status.lastBackup ||
     Date.now() - new Date(status.lastBackup).getTime() >= SEVEN_DAYS_MS
