@@ -81,7 +81,7 @@ router.get(
   execute(professorController.baixarModeloImportacao),
 );
 router.get("/tarefas", checkAuth, execute(tarefaController.listar));
-router.post("/tarefas", checkAuth, execute(tarefaController.criar));
+router.post("/tarefas", checkTeacherOrAdmin, execute(tarefaController.criar));
 router.post(
   "/tarefas/avaliacoes",
   checkTeacherOrAdmin,
