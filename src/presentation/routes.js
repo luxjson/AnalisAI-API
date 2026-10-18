@@ -52,16 +52,19 @@ router.patch(
 router.post(
   "/avaliacoes",
   checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-avaliacoes" }),
   checkAssignedClass,
   execute(professorController.adicionarCompetencia),
 );
 router.patch(
   "/alunos/presenca",
   checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-patch-alunos-presenca" }),
   checkAssignedClass,
   execute(professorController.atualizarPresenca),
 );
-router.post("/alunos", checkTeacherOrAdmin, checkAssignedClass, execute(professorController.addAluno));
+router.post("/alunos", checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-alunos" }), checkAssignedClass, execute(professorController.addAluno));
 router.delete(
   "/admin/dados-pedagogicos",
   checkAuth,
@@ -71,12 +74,14 @@ router.delete(
 router.post(
   "/alunos/importacoes",
   checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-alunos-importacoes" }),
   checkAssignedClass,
   execute(professorController.importarDados),
 );
 router.post(
   "/alunos/importacoes/completas",
   checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-alunos-importacoes-completas" }),
   checkAssignedClass,
   execute(professorController.importarDadosCompletos),
 );
@@ -86,22 +91,26 @@ router.get(
   execute(professorController.baixarModeloImportacao),
 );
 router.get("/tarefas", checkTeacherOrAdmin, execute(tarefaController.listar));
-router.post("/tarefas", checkTeacherOrAdmin, checkAssignedClass, execute(tarefaController.criar));
+router.post("/tarefas", checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-tarefas" }), checkAssignedClass, execute(tarefaController.criar));
 router.post(
   "/tarefas/avaliacoes",
   checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-tarefas-avaliacoes" }),
   checkAssignedClass,
   execute(tarefaController.avaliarAluno),
 );
 router.post(
   "/tarefas/devolucoes",
   checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-tarefas-devolucoes" }),
   checkAssignedClass,
   execute(tarefaController.devolverAluno),
 );
 router.patch(
   "/tarefas/atribuicoes/status",
   checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-patch-tarefas-atribuicoes-status" }),
   checkAssignedClass,
   execute(tarefaController.atualizarStatusAluno),
 );
@@ -261,34 +270,42 @@ router.post(
   execute(spreadsheets.preview),
 );
 router.get("/alunos/exportacoes", checkTeacherOrAdmin, execute(spreadsheets.export));
-router.get("/alunos/:id", checkTeacherOrAdmin, checkAssignedClass, execute(professorController.alunoDados));
+router.get("/alunos/:id", checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 120, keyPrefix: "scope-get-alunos-id" }), checkAssignedClass, execute(professorController.alunoDados));
 router.post(
   "/alunos/:id/redefinicao-senha",
   checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-alunos-id-redefinicao-senha" }),
   checkAssignedClass,
   execute(professorController.gerarSenhaAluno),
 );
 router.get(
   "/alunos/:id/competencias",
   checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 120, keyPrefix: "scope-get-alunos-id-competencias" }),
   checkAssignedClass,
   execute(professorController.competenciasAluno),
 );
 router.delete(
   "/avaliacoes/:id",
   checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-delete-avaliacoes-id" }),
   checkAssignedClass,
   execute(professorController.deletarCompetencia),
 );
 router.delete(
   "/alunos/:id",
   checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-delete-alunos-id" }),
   checkAssignedClass,
   execute(professorController.deleteAluno),
 );
-router.get("/tarefas/:id", checkTeacherOrAdmin, checkAssignedClass, execute(tarefaController.obterDetalhes));
-router.patch("/tarefas/:id", checkTeacherOrAdmin, checkAssignedClass, execute(tarefaController.editar));
-router.delete("/tarefas/:id", checkTeacherOrAdmin, checkAssignedClass, execute(tarefaController.excluir));
+router.get("/tarefas/:id", checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 120, keyPrefix: "scope-get-tarefas-id" }), checkAssignedClass, execute(tarefaController.obterDetalhes));
+router.patch("/tarefas/:id", checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-patch-tarefas-id" }), checkAssignedClass, execute(tarefaController.editar));
+router.delete("/tarefas/:id", checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-delete-tarefas-id" }), checkAssignedClass, execute(tarefaController.excluir));
 router.delete(
   "/calendario/eventos/:id",
   checkTeacherOrAdmin,
@@ -365,6 +382,7 @@ router.post(
 router.post(
   "/ia/alunos/:id/analises",
   checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-ia-alunos-id-analises" }),
   checkAssignedClass,
   rateLimit({ windowMs: 60 * 1000, max: 20, keyPrefix: "ai-student-analysis" }),
   execute(aiController.analyzeStudent),
@@ -372,6 +390,7 @@ router.post(
 router.post(
   "/ia/avaliacoes",
   checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-ia-avaliacoes" }),
   checkAssignedClass,
   rateLimit({ windowMs: 60 * 1000, max: 20, keyPrefix: "ai-grade-update" }),
   execute(aiController.updateGrade),
