@@ -123,11 +123,15 @@ router.get("/calendario", checkAuth, execute(calendarioController.listar));
 router.post(
   "/calendario/eventos",
   checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 30, keyPrefix: "calendar-event-write" }),
+  checkAssignedClass,
   execute(calendarioController.criarEvento),
 );
 router.post(
   "/calendario/feriados",
-  checkTeacherOrAdmin,
+  checkAuth,
+  checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 10, keyPrefix: "admin-holiday-create" }),
   execute(calendarioController.criarFeriado),
 );
 router.get(
@@ -316,7 +320,9 @@ router.delete(
 );
 router.delete(
   "/calendario/feriados/:id",
-  checkTeacherOrAdmin,
+  checkAuth,
+  checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 10, keyPrefix: "admin-holiday-delete" }),
   execute(calendarioController.deletarFeriado),
 );
 router.post(
