@@ -1,8 +1,17 @@
 const database = require("../database");
+const annualAttendance = `(
+  SELECT CASE WHEN COUNT(*) = 0 THEN NULL
+    ELSE ROUND(100.0 * COUNT(*) FILTER (WHERE fr.status = 'PRESENTE') / COUNT(*))::INTEGER
+  END
+  FROM frequencia_registros fr
+  WHERE fr.aluno_id = a.id
+    AND fr.data_aula >= date_trunc('year', CURRENT_DATE)::DATE
+    AND fr.data_aula < (date_trunc('year', CURRENT_DATE) + INTERVAL '1 year')::DATE
+)`;
 exports.query = (text, parameters) => database.query(text, parameters);
 exports.connect = () => database.connect();
 exports.getContaSql1 = () => `
-  SELECT a.nome, a.ano_escolar, a.idade, a.presenca, al.email,
+  SELECT a.nome, a.ano_escolar, a.idade, a.presenca, ${annualAttendance} AS presenca_calculada, al.email,
   al.matricula, al.status, al.data_criacao, al.ultimo_acesso,
   (
     SELECT COUNT(*)
@@ -75,7 +84,7 @@ exports.saveConfiguracoesNotificacoesSql2 = (part0, part1) =>
   RETURNING *
 `;
 exports.buscarAlunosSql1 = () => `
-  SELECT a.id, a.nome, a.ano_escolar, a.nota, a.presenca, a.nivel,
+  SELECT a.id, a.nome, a.ano_escolar, a.nota, a.presenca, ${annualAttendance} AS presenca_calculada, a.nivel,
   al.email, al.matricula
   FROM alunos a
   LEFT
