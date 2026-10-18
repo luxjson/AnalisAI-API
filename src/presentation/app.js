@@ -16,6 +16,14 @@ function createApp({ store } = {}) {
   const app = express();
   app.disable("x-powered-by");
   app.set("trust proxy", config.production ? 1 : false);
+  const RateLimit = require("express-rate-limit");
+  const apiRateLimit = RateLimit({
+    windowMs: 60 * 1000,
+    limit: 300,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+  });
+  app.use(apiRateLimit);
   app.use(
     helmet({
       contentSecurityPolicy: {
