@@ -9,6 +9,7 @@ const {
   integerId,
   ALLOWED_CARGOS,
   ALLOWED_STATUS,
+  ALLOWED_YEARS,
 } = require("../../domain/validation");
 const checkupService = require("../services/checkupService");
 const backupService = require("../services/backupService");
@@ -85,9 +86,7 @@ exports.adicionarUsuario = async (command, outcome) => {
 };
 exports.atualizarUsuario = async (command, outcome) => {
   const id = integerId(command.ids.id);
-  const nome = text(command.input.nome, 100, {
-    min: 2,
-  });
+  const nome = text(command.input.nome, 100, { min: 2 });
   const userEmail = email(command.input.email);
   const cargo = ALLOWED_CARGOS.includes(command.input.cargo)
     ? command.input.cargo
@@ -95,6 +94,18 @@ exports.atualizarUsuario = async (command, outcome) => {
   const status = ALLOWED_STATUS.includes(command.input.status)
     ? command.input.status
     : null;
+  const turmasEditadas = command.input.turmas_editadas === "true";
+  const submittedTurmas = command.input.turmas;
+  const turmas = [
+    ...new Set(
+      Array.isArray(submittedTurmas)
+        ? submittedTurmas
+        : submittedTurmas
+          ? [submittedTurmas]
+          : [],
+    ),
+  ];
+
   if (!id) {
     command.message("error_msg", "ID de usuário inválido.");
     return outcome.complete("/dashboard/usuarios");
@@ -125,31 +136,75 @@ exports.atualizarUsuario = async (command, outcome) => {
     );
     return outcome.complete("/dashboard/usuarios");
   }
+  if (
+    cargo === "Professor" &&
+    (!turmasEditadas ||
+      !turmas.length ||
+      turmas.some((turma) => !ALLOWED_YEARS.includes(turma)))
+  ) {
+    command.message(
+      "error_msg",
+      "Selecione ao menos uma turma válida para o professor.",
+    );
+    return outcome.complete("/dashboard/usuarios");
+  }
+
+  const client = await repository.connect();
+  let inTransaction = false;
   try {
-    const current = await repository.query(repository.atualizarUsuarioSql1(), [
-      id,
-    ]);
+    await client.query("BEGIN");
+    inTransaction = true;
+    const current = await client.query(repository.atualizarUsuarioSql1(), [id]);
     if (current.rows.length === 0) {
+      await client.query("ROLLBACK");
+      inTransaction = false;
       command.message("error_msg", "Usuário não encontrado.");
       return outcome.complete("/dashboard/usuarios");
     }
+
     const roleChanged =
       current.rows[0].cargo !== cargo || current.rows[0].status !== status;
-    await repository.query(repository.atualizarUsuarioSql2(), [
+    await client.query(repository.atualizarUsuarioSql2(), [
       nome,
       userEmail,
       cargo,
       status,
       id,
     ]);
-    if (roleChanged) {
-      await repository.query(repository.atualizarUsuarioSql3(), [String(id)]);
+
+    await client.query(
+      "DELETE FROM professor_turmas WHERE professor_id = $1",
+      [id],
+    );
+    if (cargo === "Professor") {
+      for (const turma of turmas) {
+        await client.query(
+          `INSERT INTO professor_turmas (professor_id, turma)
+           VALUES ($1, $2)
+           ON CONFLICT (professor_id, turma) DO NOTHING`,
+          [id, turma],
+        );
+      }
     }
+    await client.query(
+      "UPDATE usuarios SET onboarding_concluido = TRUE WHERE id = $1",
+      [id],
+    );
+
+    if (roleChanged)
+      await client.query(repository.atualizarUsuarioSql3(), [String(id)]);
+    await client.query("COMMIT");
+    inTransaction = false;
     command.message("success_msg", "Usuário atualizado com sucesso!");
-    outcome.complete("/dashboard/usuarios");
+    return outcome.complete("/dashboard/usuarios");
   } catch (err) {
+    if (inTransaction) await client.query("ROLLBACK").catch(() => {});
+    if (process.env.NODE_ENV !== "production")
+      console.error("Erro ao atualizar usuário:", err.message);
     command.message("error_msg", "Erro ao atualizar usuário");
-    outcome.complete("/dashboard/usuarios");
+    return outcome.complete("/dashboard/usuarios");
+  } finally {
+    client.release();
   }
 };
 exports.deletarUsuario = async (command, outcome) => {
