@@ -42,7 +42,7 @@ exports.getConta = async (command, outcome) => {
         email: row.email || "Não informado",
         age: row.idade ? `${row.idade} anos` : "—",
         assessments: Number(row.avaliacoes || 0),
-        attendance: `${Number(row.presenca || 0)}%`,
+        attendance: row.presenca_calculada == null ? "Sem registros de aula" : `${Number(row.presenca_calculada)}%`,
         status: row.status || "ATIVO",
         created: formatDate(row.data_criacao),
         lastAccess: formatDateTime(row.ultimo_acesso),
@@ -325,7 +325,13 @@ exports.buscarAlunos = async (command, outcome) => {
     outcome.data({
       sucesso: true,
       total: result.rows.length,
-      alunos: result.rows,
+      alunos: result.rows.map((aluno) => ({
+        ...aluno,
+        presenca:
+          aluno.presenca_calculada == null
+            ? null
+            : Number(aluno.presenca_calculada),
+      })),
     });
   } catch (err) {
     if (process.env.NODE_ENV !== "production")
