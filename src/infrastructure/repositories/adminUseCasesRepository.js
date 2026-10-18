@@ -2,7 +2,14 @@ const database = require("../database");
 exports.query = (text, parameters) => database.query(text, parameters);
 exports.connect = () => database.connect();
 exports.listarUsuariosSql1 = () =>
-  "SELECT id, nome, email, cargo, status FROM usuarios ORDER BY nome ASC";
+  `SELECT u.id, u.nome, u.email, u.cargo, u.status,
+    COALESCE((
+      SELECT array_agg(pt.turma ORDER BY pt.turma)
+      FROM professor_turmas pt
+      WHERE pt.professor_id = u.id
+    ), ARRAY[]::VARCHAR[]) AS turmas
+   FROM usuarios u
+   ORDER BY u.nome ASC`;
 exports.adicionarUsuarioSql1 = () =>
   "INSERT INTO usuarios (nome, email, senha, cargo, status) VALUES ($1, $2, $3, $4, $5)";
 exports.atualizarUsuarioSql1 = () =>
