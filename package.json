@@ -30,7 +30,8 @@
     "multer": "^2.0.2",
     "pg": "^8.16.3",
     "sanitize-html": "^2.18.1",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
+    "express-rate-limit": "^8.7.1"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.10",
@@ -42,6 +43,6 @@
     }
   },
   "allowScripts": {
-    "argon2@0.44.0": true
+    "argon2@0.45.1": true
   }
 }
