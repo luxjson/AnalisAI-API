@@ -175,18 +175,21 @@ router.get(
   "/admin/usuarios",
   checkAuth,
   checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "admin-users-read" }),
   execute(adminController.listarUsuarios),
 );
 router.post(
   "/admin/usuarios",
   checkAuth,
   checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 20, keyPrefix: "admin-users-create" }),
   execute(adminController.adicionarUsuario),
 );
 router.patch(
   "/admin/usuarios/:id",
   checkAuth,
   checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 30, keyPrefix: "admin-users-update" }),
   execute(adminController.atualizarUsuario),
 );
 router.get(
@@ -326,18 +329,21 @@ router.delete(
   "/admin/usuarios/:id",
   checkAuth,
   checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 10, keyPrefix: "admin-users-delete" }),
   execute(adminController.deletarUsuario),
 );
 router.post(
   "/admin/solicitacoes-senha/:id/aprovacoes",
   checkAuth,
   checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 10, keyPrefix: "admin-password-approve" }),
   execute(adminController.aprovarSolicitacaoSenha),
 );
 router.post(
   "/admin/solicitacoes-senha/:id/rejeicoes",
   checkAuth,
   checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 10, keyPrefix: "admin-password-reject" }),
   execute(adminController.rejeitarSolicitacaoSenha),
 );
 router.post(
