@@ -7,6 +7,7 @@ const {
   checkAnyAuth,
   checkAdmin,
   checkTeacherOrAdmin,
+  checkAssignedClass,
 } = require("./middlewares/auth");
 const { rateLimit } = require("./middlewares/security");
 const upload = require("./middlewares/upload");
@@ -35,8 +36,8 @@ router.get(
   checkAuth,
   execute(professorController.dashboard),
 );
-router.get("/professores/ia", checkAuth, execute(aiController.teacherPage));
-router.get("/alunos", checkAuth, execute(professorController.editAlunos));
+router.get("/professores/ia", checkTeacherOrAdmin, execute(aiController.teacherPage));
+router.get("/alunos", checkTeacherOrAdmin, execute(professorController.editAlunos));
 router.get(
   "/professores/estatisticas",
   checkAuth,
@@ -51,14 +52,16 @@ router.patch(
 router.post(
   "/avaliacoes",
   checkTeacherOrAdmin,
+  checkAssignedClass,
   execute(professorController.adicionarCompetencia),
 );
 router.patch(
   "/alunos/presenca",
   checkTeacherOrAdmin,
+  checkAssignedClass,
   execute(professorController.atualizarPresenca),
 );
-router.post("/alunos", checkTeacherOrAdmin, execute(professorController.addAluno));
+router.post("/alunos", checkTeacherOrAdmin, checkAssignedClass, execute(professorController.addAluno));
 router.delete(
   "/admin/dados-pedagogicos",
   checkAuth,
@@ -68,11 +71,13 @@ router.delete(
 router.post(
   "/alunos/importacoes",
   checkTeacherOrAdmin,
+  checkAssignedClass,
   execute(professorController.importarDados),
 );
 router.post(
   "/alunos/importacoes/completas",
   checkTeacherOrAdmin,
+  checkAssignedClass,
   execute(professorController.importarDadosCompletos),
 );
 router.get(
@@ -80,8 +85,8 @@ router.get(
   checkAuth,
   execute(professorController.baixarModeloImportacao),
 );
-router.get("/tarefas", checkAuth, execute(tarefaController.listar));
-router.post("/tarefas", checkTeacherOrAdmin, execute(tarefaController.criar));
+router.get("/tarefas", checkTeacherOrAdmin, execute(tarefaController.listar));
+router.post("/tarefas", checkTeacherOrAdmin, checkAssignedClass, execute(tarefaController.criar));
 router.post(
   "/tarefas/avaliacoes",
   checkTeacherOrAdmin,
@@ -99,7 +104,7 @@ router.patch(
 );
 router.get(
   "/tarefas/estatisticas",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(tarefaController.estatisticas),
 );
 router.get("/calendario", checkAuth, execute(calendarioController.listar));
@@ -223,7 +228,7 @@ router.patch(
   checkAnyAuth,
   execute(apiController.saveConfiguracoesNotificacoes),
 );
-router.get("/alunos/busca", checkAuth, execute(apiController.buscarAlunos));
+router.get("/alunos/busca", checkTeacherOrAdmin, execute(apiController.buscarAlunos));
 router.get("/health", execute(apiController.healthCheck));
 router.get("/ia/conversas", checkAnyAuth, execute(aiController.history));
 router.post(
@@ -252,31 +257,35 @@ router.post(
   upload.single("arquivo"),
   execute(spreadsheets.preview),
 );
-router.get("/alunos/exportacoes", checkAuth, execute(spreadsheets.export));
-router.get("/alunos/:id", checkAuth, execute(professorController.alunoDados));
+router.get("/alunos/exportacoes", checkTeacherOrAdmin, execute(spreadsheets.export));
+router.get("/alunos/:id", checkTeacherOrAdmin, checkAssignedClass, execute(professorController.alunoDados));
 router.post(
   "/alunos/:id/redefinicao-senha",
   checkTeacherOrAdmin,
+  checkAssignedClass,
   execute(professorController.gerarSenhaAluno),
 );
 router.get(
   "/alunos/:id/competencias",
-  checkAuth,
+  checkTeacherOrAdmin,
+  checkAssignedClass,
   execute(professorController.competenciasAluno),
 );
 router.delete(
   "/avaliacoes/:id",
   checkTeacherOrAdmin,
+  checkAssignedClass,
   execute(professorController.deletarCompetencia),
 );
 router.delete(
   "/alunos/:id",
   checkTeacherOrAdmin,
+  checkAssignedClass,
   execute(professorController.deleteAluno),
 );
-router.get("/tarefas/:id", checkAuth, execute(tarefaController.obterDetalhes));
-router.patch("/tarefas/:id", checkTeacherOrAdmin, execute(tarefaController.editar));
-router.delete("/tarefas/:id", checkTeacherOrAdmin, execute(tarefaController.excluir));
+router.get("/tarefas/:id", checkTeacherOrAdmin, checkAssignedClass, execute(tarefaController.obterDetalhes));
+router.patch("/tarefas/:id", checkTeacherOrAdmin, checkAssignedClass, execute(tarefaController.editar));
+router.delete("/tarefas/:id", checkTeacherOrAdmin, checkAssignedClass, execute(tarefaController.excluir));
 router.delete(
   "/calendario/eventos/:id",
   checkTeacherOrAdmin,
