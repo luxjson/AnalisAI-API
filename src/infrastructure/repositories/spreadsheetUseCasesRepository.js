@@ -1,7 +1,7 @@
 const database = require("../database");
 exports.query = (text, parameters) => database.query(text, parameters);
 exports.connect = () => database.connect();
-exports.exportSql1 = () =>
+exports.exportSql1 = (scoped = false) =>
   `
   SELECT a.*, COALESCE(json_agg(json_build_object('nome', c.nome,
         'nota', ac.nota, 'observacoes', ac.observacoes)
@@ -12,6 +12,7 @@ exports.exportSql1 = () =>
   JOIN aluno_competencias ac ON ac.aluno_id = a.id
   LEFT
   JOIN competencias c ON c.id = ac.competencia_id
+  ${scoped ? "WHERE a.ano_escolar = ANY($1::text[])" : ""}
   GROUP BY a.id
   ORDER BY a.nome
 `;
