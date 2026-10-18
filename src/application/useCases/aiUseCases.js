@@ -1,5 +1,6 @@
 const repository = require("../../infrastructure/repositories/aiUseCasesRepository.js");
 const { integerId, text } = require("../../domain/validation");
+const { uniqueRow } = require("../../domain/uniqueRow");
 const {
   generateResponse,
   isDirectAnswerRequest,
@@ -87,12 +88,14 @@ async function detectGradeAction(message) {
     repository.query(repository.detectGradeActionSql1(), [match[1].trim()]),
     repository.query(repository.detectGradeActionSql2(), [match[2].trim()]),
   ]);
-  if (!student.rows[0] || !competency.rows[0]) return null;
+  const matchedStudent = uniqueRow(student.rows);
+  const matchedCompetency = uniqueRow(competency.rows);
+  if (!matchedStudent || !matchedCompetency) return null;
   return {
-    alunoId: student.rows[0].id,
-    alunoNome: student.rows[0].nome,
-    competenciaId: competency.rows[0].id,
-    competenciaNome: competency.rows[0].nome,
+    alunoId: matchedStudent.id,
+    alunoNome: matchedStudent.nome,
+    competenciaId: matchedCompetency.id,
+    competenciaNome: matchedCompetency.nome,
     nota,
   };
 }

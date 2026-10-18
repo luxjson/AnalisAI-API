@@ -2,7 +2,6 @@ services:
   - type: web
     name: analisai-api
     runtime: node
-    rootDir: api
     plan: starter
     region: virginia
     buildCommand: npm ci --omit=dev

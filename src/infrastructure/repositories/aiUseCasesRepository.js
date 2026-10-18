@@ -23,9 +23,9 @@ exports.updateConversationTitleSql1 = () =>
   WHERE id = $2
 `;
 exports.detectGradeActionSql1 = () =>
-  "SELECT id, nome FROM alunos WHERE LOWER(nome) = LOWER($1) LIMIT 1";
+  "SELECT id, nome FROM alunos WHERE LOWER(nome) = LOWER($1) LIMIT 2";
 exports.detectGradeActionSql2 = () =>
-  "SELECT id, nome FROM competencias WHERE LOWER(nome) = LOWER($1) LIMIT 1";
+  "SELECT id, nome FROM competencias WHERE LOWER(nome) = LOWER($1) LIMIT 2";
 exports.getConversationHistorySql1 = () =>
   `
   SELECT papel AS role, conteudo AS text
