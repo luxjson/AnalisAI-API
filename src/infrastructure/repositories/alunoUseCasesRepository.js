@@ -25,6 +25,18 @@ exports.dashboardSql2 = () => `
   WHERE ac.aluno_id = $1
   ORDER BY ac.data_registro DESC
 `;
+exports.dashboardAttendanceSql = () => `
+  SELECT
+    COUNT(*)::INTEGER AS total_aulas,
+    COUNT(*) FILTER (WHERE status = 'PRESENTE')::INTEGER AS presencas,
+    COUNT(*) FILTER (WHERE status = 'FALTA')::INTEGER AS faltas,
+    COUNT(*) FILTER (WHERE status = 'JUSTIFICADA')::INTEGER AS justificadas,
+    COUNT(DISTINCT data_aula)::INTEGER AS dias_registrados
+  FROM frequencia_registros
+  WHERE aluno_id = $1
+    AND data_aula >= make_date($2::INTEGER, 1, 1)
+    AND data_aula < make_date($2::INTEGER + 1, 1, 1)
+`;
 exports.dashboardSql3 = () =>
   `
   UPDATE alunos_login
