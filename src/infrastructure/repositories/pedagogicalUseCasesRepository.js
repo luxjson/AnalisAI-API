@@ -109,6 +109,8 @@ exports.refreshAttendancePercentagesSql = () => `
     )::INTEGER
     FROM frequencia_registros fr
     WHERE fr.aluno_id = a.id
+      AND fr.data_aula >= make_date($2::INTEGER, 1, 1)
+      AND fr.data_aula < make_date($2::INTEGER + 1, 1, 1)
   ), 100)
   WHERE a.id = ANY($1::INTEGER[])
 `;
