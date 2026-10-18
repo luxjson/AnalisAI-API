@@ -312,8 +312,11 @@ exports.studentReportPdf = async (command, outcome) => {
   if (command.session.aluno?.id) {
     if (Number(command.session.aluno.id) !== studentId)
       return outcome.code(403).data({ error: "Você só pode consultar seu próprio relatório." });
-  } else if (command.session.userCargo === "Professor") {
-    if (!(await canManageClass(command, student.ano_escolar)))
+  } else {
+    const cargo = command.session.userCargo;
+    if (!["Professor", "Coordenador", "Admin"].includes(cargo))
+      return outcome.code(403).data({ error: "Seu perfil não pode consultar relatórios individuais." });
+    if (cargo === "Professor" && !(await canManageClass(command, student.ano_escolar)))
       return outcome.code(403).data({ error: "Este aluno não pertence às suas turmas." });
   }
 
@@ -344,6 +347,8 @@ exports.getReportRequests = async (command, outcome) => {
   const userId = integerId(command.session.userId);
   const cargo = command.session.userCargo;
   if (!userId) return outcome.code(401).data({ error: "Sessão inválida." });
+  if (!["Professor", "Coordenador", "Admin"].includes(cargo))
+    return outcome.code(403).data({ error: "Seu perfil não pode consultar solicitações de relatório." });
   let requests;
   if (cargo === "Admin") {
     requests = await repository.query(repository.reportRequestsForAdminSql());
