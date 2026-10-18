@@ -6,6 +6,8 @@ const {
   checkAlunoAuth,
   checkAnyAuth,
   checkAdmin,
+  checkTeacherOrAdmin,
+  checkAssignedClass,
 } = require("./middlewares/auth");
 const { rateLimit } = require("./middlewares/security");
 const upload = require("./middlewares/upload");
@@ -17,6 +19,16 @@ const calendarioController = require("../application/useCases/calendarioUseCases
 const adminController = require("../application/useCases/adminUseCases");
 const apiController = require("../application/useCases/apiUseCases");
 const aiController = require("../application/useCases/aiUseCases");
+const pedagogicalController = require("../application/useCases/pedagogicalUseCases");
+
+router.get("/perfil-pedagogico", checkAuth, rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "pedagogical-profile-read" }), execute(pedagogicalController.getProfile));
+router.patch("/perfil-pedagogico", checkAuth, rateLimit({ windowMs: 60 * 1000, max: 10, keyPrefix: "pedagogical-profile-write" }), execute(pedagogicalController.saveProfile));
+router.get("/frequencia", checkAuth, rateLimit({ windowMs: 60 * 1000, max: 120, keyPrefix: "attendance-read" }), execute(pedagogicalController.getAttendance));
+router.post("/frequencia", checkAuth, rateLimit({ windowMs: 60 * 1000, max: 30, keyPrefix: "attendance-write" }), execute(pedagogicalController.saveAttendance));
+router.get("/alunos/:id/relatorio.pdf", checkAnyAuth, rateLimit({ windowMs: 60 * 1000, max: 15, keyPrefix: "student-report-pdf" }), execute(pedagogicalController.studentReportPdf));
+router.get("/relatorios/solicitacoes", checkAuth, rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "report-requests-read" }), execute(pedagogicalController.getReportRequests));
+router.post("/relatorios/solicitacoes", checkAuth, rateLimit({ windowMs: 60 * 1000, max: 15, keyPrefix: "report-requests-write" }), execute(pedagogicalController.createReportRequest));
+router.patch("/relatorios/solicitacoes/:id", checkAuth, rateLimit({ windowMs: 60 * 1000, max: 30, keyPrefix: "report-requests-update" }), execute(pedagogicalController.updateReportRequest));
 
 router.post("/auth/logout", execute(authController.logout));
 router.get(
@@ -24,8 +36,8 @@ router.get(
   checkAuth,
   execute(professorController.dashboard),
 );
-router.get("/professores/ia", checkAuth, execute(aiController.teacherPage));
-router.get("/alunos", checkAuth, execute(professorController.editAlunos));
+router.get("/professores/ia", checkTeacherOrAdmin, execute(aiController.teacherPage));
+router.get("/alunos", checkTeacherOrAdmin, execute(professorController.editAlunos));
 router.get(
   "/professores/estatisticas",
   checkAuth,
@@ -39,15 +51,20 @@ router.patch(
 );
 router.post(
   "/avaliacoes",
-  checkAuth,
+  checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-avaliacoes" }),
+  checkAssignedClass,
   execute(professorController.adicionarCompetencia),
 );
 router.patch(
   "/alunos/presenca",
-  checkAuth,
+  checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-patch-alunos-presenca" }),
+  checkAssignedClass,
   execute(professorController.atualizarPresenca),
 );
-router.post("/alunos", checkAuth, execute(professorController.addAluno));
+router.post("/alunos", checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-alunos" }), checkAssignedClass, execute(professorController.addAluno));
 router.delete(
   "/admin/dados-pedagogicos",
   checkAuth,
@@ -56,12 +73,16 @@ router.delete(
 );
 router.post(
   "/alunos/importacoes",
-  checkAuth,
+  checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-alunos-importacoes" }),
+  checkAssignedClass,
   execute(professorController.importarDados),
 );
 router.post(
   "/alunos/importacoes/completas",
-  checkAuth,
+  checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-alunos-importacoes-completas" }),
+  checkAssignedClass,
   execute(professorController.importarDadosCompletos),
 );
 router.get(
@@ -69,37 +90,48 @@ router.get(
   checkAuth,
   execute(professorController.baixarModeloImportacao),
 );
-router.get("/tarefas", checkAuth, execute(tarefaController.listar));
-router.post("/tarefas", checkAuth, execute(tarefaController.criar));
+router.get("/tarefas", checkTeacherOrAdmin, execute(tarefaController.listar));
+router.post("/tarefas", checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-tarefas" }), checkAssignedClass, execute(tarefaController.criar));
 router.post(
   "/tarefas/avaliacoes",
-  checkAuth,
+  checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-tarefas-avaliacoes" }),
+  checkAssignedClass,
   execute(tarefaController.avaliarAluno),
 );
 router.post(
   "/tarefas/devolucoes",
-  checkAuth,
+  checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-tarefas-devolucoes" }),
+  checkAssignedClass,
   execute(tarefaController.devolverAluno),
 );
 router.patch(
   "/tarefas/atribuicoes/status",
-  checkAuth,
+  checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-patch-tarefas-atribuicoes-status" }),
+  checkAssignedClass,
   execute(tarefaController.atualizarStatusAluno),
 );
 router.get(
   "/tarefas/estatisticas",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(tarefaController.estatisticas),
 );
 router.get("/calendario", checkAuth, execute(calendarioController.listar));
 router.post(
   "/calendario/eventos",
-  checkAuth,
+  checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 30, keyPrefix: "calendar-event-write" }),
+  checkAssignedClass,
   execute(calendarioController.criarEvento),
 );
 router.post(
   "/calendario/feriados",
   checkAuth,
+  checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 10, keyPrefix: "admin-holiday-create" }),
   execute(calendarioController.criarFeriado),
 );
 router.get(
@@ -147,18 +179,21 @@ router.get(
   "/admin/usuarios",
   checkAuth,
   checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "admin-users-read" }),
   execute(adminController.listarUsuarios),
 );
 router.post(
   "/admin/usuarios",
   checkAuth,
   checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 20, keyPrefix: "admin-users-create" }),
   execute(adminController.adicionarUsuario),
 );
 router.patch(
   "/admin/usuarios/:id",
   checkAuth,
   checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 30, keyPrefix: "admin-users-update" }),
   execute(adminController.atualizarUsuario),
 );
 router.get(
@@ -212,7 +247,7 @@ router.patch(
   checkAnyAuth,
   execute(apiController.saveConfiguracoesNotificacoes),
 );
-router.get("/alunos/busca", checkAuth, execute(apiController.buscarAlunos));
+router.get("/alunos/busca", checkTeacherOrAdmin, execute(apiController.buscarAlunos));
 router.get("/health", execute(apiController.healthCheck));
 router.get("/ia/conversas", checkAnyAuth, execute(aiController.history));
 router.post(
@@ -237,43 +272,57 @@ router.post(
 const spreadsheets = require("../application/useCases/spreadsheetUseCases");
 router.post(
   "/alunos/importacoes/preview",
-  checkAuth,
+  checkTeacherOrAdmin,
   upload.single("arquivo"),
   execute(spreadsheets.preview),
 );
-router.get("/alunos/exportacoes", checkAuth, execute(spreadsheets.export));
-router.get("/alunos/:id", checkAuth, execute(professorController.alunoDados));
+router.get("/alunos/exportacoes", checkTeacherOrAdmin, execute(spreadsheets.export));
+router.get("/alunos/:id", checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 120, keyPrefix: "scope-get-alunos-id" }), checkAssignedClass, execute(professorController.alunoDados));
 router.post(
   "/alunos/:id/redefinicao-senha",
-  checkAuth,
+  checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-alunos-id-redefinicao-senha" }),
+  checkAssignedClass,
   execute(professorController.gerarSenhaAluno),
 );
 router.get(
   "/alunos/:id/competencias",
-  checkAuth,
+  checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 120, keyPrefix: "scope-get-alunos-id-competencias" }),
+  checkAssignedClass,
   execute(professorController.competenciasAluno),
 );
 router.delete(
   "/avaliacoes/:id",
-  checkAuth,
+  checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-delete-avaliacoes-id" }),
+  checkAssignedClass,
   execute(professorController.deletarCompetencia),
 );
 router.delete(
   "/alunos/:id",
-  checkAuth,
+  checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-delete-alunos-id" }),
+  checkAssignedClass,
   execute(professorController.deleteAluno),
 );
-router.get("/tarefas/:id", checkAuth, execute(tarefaController.obterDetalhes));
-router.patch("/tarefas/:id", checkAuth, execute(tarefaController.editar));
-router.delete("/tarefas/:id", checkAuth, execute(tarefaController.excluir));
+router.get("/tarefas/:id", checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 120, keyPrefix: "scope-get-tarefas-id" }), checkAssignedClass, execute(tarefaController.obterDetalhes));
+router.patch("/tarefas/:id", checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-patch-tarefas-id" }), checkAssignedClass, execute(tarefaController.editar));
+router.delete("/tarefas/:id", checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-delete-tarefas-id" }), checkAssignedClass, execute(tarefaController.excluir));
 router.delete(
   "/calendario/eventos/:id",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(calendarioController.deletarEvento),
 );
 router.delete(
   "/calendario/feriados/:id",
   checkAuth,
+  checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 10, keyPrefix: "admin-holiday-delete" }),
   execute(calendarioController.deletarFeriado),
 );
 router.post(
@@ -286,18 +335,21 @@ router.delete(
   "/admin/usuarios/:id",
   checkAuth,
   checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 10, keyPrefix: "admin-users-delete" }),
   execute(adminController.deletarUsuario),
 );
 router.post(
   "/admin/solicitacoes-senha/:id/aprovacoes",
   checkAuth,
   checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 10, keyPrefix: "admin-password-approve" }),
   execute(adminController.aprovarSolicitacaoSenha),
 );
 router.post(
   "/admin/solicitacoes-senha/:id/rejeicoes",
   checkAuth,
   checkAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 10, keyPrefix: "admin-password-reject" }),
   execute(adminController.rejeitarSolicitacaoSenha),
 );
 router.post(
@@ -335,19 +387,23 @@ router.post(
 );
 router.post(
   "/ia/professor/mensagens",
-  checkAuth,
+  checkTeacherOrAdmin,
   rateLimit({ windowMs: 60 * 1000, max: 12, keyPrefix: "ai-teacher" }),
   execute(aiController.teacherChat),
 );
 router.post(
   "/ia/alunos/:id/analises",
-  checkAuth,
+  checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-ia-alunos-id-analises" }),
+  checkAssignedClass,
   rateLimit({ windowMs: 60 * 1000, max: 20, keyPrefix: "ai-student-analysis" }),
   execute(aiController.analyzeStudent),
 );
 router.post(
   "/ia/avaliacoes",
-  checkAuth,
+  checkTeacherOrAdmin,
+  rateLimit({ windowMs: 60 * 1000, max: 60, keyPrefix: "scope-post-ia-avaliacoes" }),
+  checkAssignedClass,
   rateLimit({ windowMs: 60 * 1000, max: 20, keyPrefix: "ai-grade-update" }),
   execute(aiController.updateGrade),
 );
