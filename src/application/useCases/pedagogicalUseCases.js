@@ -139,6 +139,10 @@ exports.getAttendance = async (command, outcome) => {
     : currentDate();
   if (!dataAula)
     return outcome.code(400).data({ error: "Data da aula inválida." });
+  if (Number(dataAula.slice(0, 4)) !== year)
+    return outcome.code(400).data({
+      error: "O ano letivo selecionado deve corresponder ao ano da data da aula.",
+    });
   const inicio = command.filters.horario_inicio || "07:30";
   const fim = command.filters.horario_fim || "08:20";
   if ((inicio && !validTime(inicio)) || (fim && !validTime(fim)))
