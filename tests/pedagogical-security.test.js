@@ -28,7 +28,7 @@ test("class-scoped routes rate-limit before the database-backed ownership middle
 test("task class filters remain parameterized SQL", () => {
   const source = read("src/infrastructure/repositories/tarefaUseCasesRepository.js");
   assert.ok(
-    source.includes("exports.listarSql2 = (part0) => ` AND t.turma = $${part0}`;"),
+    source.includes('exports.listarSql2 = (part0) => " AND t.turma = $" + part0;'),
     "class filters must use a PostgreSQL placeholder, never inline a value",
   );
 });
