@@ -51,7 +51,7 @@ exports.dashboardSql4 = (scoped = false) => `
   ORDER BY media DESC
 `;
 exports.editAlunosSql1 = (scoped = false) => `
-  SELECT a.*, COALESCE((
+  SELECT a.*, ${annualAttendance} AS presenca_calculada, COALESCE((
       SELECT json_agg(json_build_object('id', nd.id, 'titulo',
           nd.titulo, 'descricao', nd.descricao, 'valor', nd.valor,
           'data_criacao', nd.data_criacao)
@@ -77,7 +77,7 @@ FROM competencias
 ORDER BY id ASC
 `;
 exports.graficosSql1 = (scoped = false) => `
-  SELECT a.*, COALESCE((
+  SELECT a.*, ${annualAttendance} AS presenca_calculada, COALESCE((
       SELECT json_agg(json_build_object('nota', ac.nota))
       FROM aluno_competencias ac
       WHERE ac.aluno_id = a.id), '[]'::json) as competencias
