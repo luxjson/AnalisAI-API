@@ -1,5 +1,6 @@
 const repository = require("../../infrastructure/repositories/pedagogicalUseCasesRepository");
 const { buildStudentReport } = require("../services/studentReportPdf");
+const { calendarDaysInYear } = require("../../domain/attendance");
 const {
   ALLOWED_YEARS,
   integerId,
@@ -12,8 +13,6 @@ const ATTENDANCE_STATUSES = new Set(["PRESENTE", "FALTA", "JUSTIFICADA"]);
 const validTime = (value) =>
   typeof value === "string" &&
   /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value);
-const yearDays = (year) =>
-  year % 400 === 0 || (year % 4 === 0 && year % 100 !== 0) ? 366 : 365;
 const currentYear = () => new Date().getFullYear();
 const currentDate = () =>
   new Intl.DateTimeFormat("en-CA", {
@@ -135,9 +134,13 @@ exports.getAttendance = async (command, outcome) => {
   const year = Number(command.filters.ano || currentYear());
   if (!Number.isInteger(year) || year < 2000 || year > 2100)
     return outcome.code(400).data({ error: "Ano letivo inválido." });
-  const dataAula = dateOnly(command.filters.data) || currentDate();
-  const inicio = command.filters.horario_inicio || "";
-  const fim = command.filters.horario_fim || "";
+  const dataAula = command.filters.data
+    ? dateOnly(command.filters.data)
+    : currentDate();
+  if (!dataAula)
+    return outcome.code(400).data({ error: "Data da aula inválida." });
+  const inicio = command.filters.horario_inicio || "07:30";
+  const fim = command.filters.horario_fim || "08:20";
   if ((inicio && !validTime(inicio)) || (fim && !validTime(fim)))
     return outcome.code(400).data({ error: "Horário inválido." });
   if (inicio && fim && inicio >= fim)
@@ -175,21 +178,21 @@ exports.getAttendance = async (command, outcome) => {
     turmas,
     data: dataAula,
     ano: year,
-    diasNoAno: yearDays(year),
+    diasNoAno: calendarDaysInYear(year),
     horario_inicio: inicio,
     horario_fim: fim,
     alunos: students.rows,
     resumo: {
       totalAlunos: students.rows.length,
-      frequenciaMedia:
-        students.rows.length
+      frequenciaMedia: (() => {
+        const withRecords = students.rows.filter((student) => Number(student.total_aulas) > 0);
+        return withRecords.length
           ? Math.round(
-              students.rows.reduce(
-                (sum, student) => sum + Number(student.frequencia_anual || 0),
-                0,
-              ) / students.rows.length,
+              withRecords.reduce((sum, student) => sum + Number(student.frequencia_anual || 0), 0) /
+                withRecords.length,
             )
-          : 0,
+          : null;
+      })(),
       aulasRegistradas: students.rows.reduce(
         (max, student) => Math.max(max, Number(student.total_aulas || 0)),
         0,
@@ -302,7 +305,7 @@ exports.studentReportPdf = async (command, outcome) => {
     competencies: competencies.rows,
     attendance: attendance.rows[0] || {},
     year,
-    yearDays: yearDays(year),
+    yearDays: calendarDaysInYear(year),
   });
   outcome.header("Content-Type", "application/pdf");
   outcome.header(
@@ -426,4 +429,4 @@ exports.updateReportRequest = async (command, outcome) => {
   return outcome.data({ sucesso: true, solicitacao: result.rows[0] });
 };
 
-exports.isLeapYear = (year) => yearDays(year);
+exports.isLeapYear = (year) => calendarDaysInYear(year);
