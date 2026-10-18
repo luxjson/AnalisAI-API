@@ -6,6 +6,7 @@ const {
   checkAlunoAuth,
   checkAnyAuth,
   checkAdmin,
+  checkTeacherOrAdmin,
 } = require("./middlewares/auth");
 const { rateLimit } = require("./middlewares/security");
 const upload = require("./middlewares/upload");
@@ -49,15 +50,15 @@ router.patch(
 );
 router.post(
   "/avaliacoes",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(professorController.adicionarCompetencia),
 );
 router.patch(
   "/alunos/presenca",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(professorController.atualizarPresenca),
 );
-router.post("/alunos", checkAuth, execute(professorController.addAluno));
+router.post("/alunos", checkTeacherOrAdmin, execute(professorController.addAluno));
 router.delete(
   "/admin/dados-pedagogicos",
   checkAuth,
@@ -66,12 +67,12 @@ router.delete(
 );
 router.post(
   "/alunos/importacoes",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(professorController.importarDados),
 );
 router.post(
   "/alunos/importacoes/completas",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(professorController.importarDadosCompletos),
 );
 router.get(
@@ -83,17 +84,17 @@ router.get("/tarefas", checkAuth, execute(tarefaController.listar));
 router.post("/tarefas", checkAuth, execute(tarefaController.criar));
 router.post(
   "/tarefas/avaliacoes",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(tarefaController.avaliarAluno),
 );
 router.post(
   "/tarefas/devolucoes",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(tarefaController.devolverAluno),
 );
 router.patch(
   "/tarefas/atribuicoes/status",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(tarefaController.atualizarStatusAluno),
 );
 router.get(
@@ -104,12 +105,12 @@ router.get(
 router.get("/calendario", checkAuth, execute(calendarioController.listar));
 router.post(
   "/calendario/eventos",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(calendarioController.criarEvento),
 );
 router.post(
   "/calendario/feriados",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(calendarioController.criarFeriado),
 );
 router.get(
@@ -247,7 +248,7 @@ router.post(
 const spreadsheets = require("../application/useCases/spreadsheetUseCases");
 router.post(
   "/alunos/importacoes/preview",
-  checkAuth,
+  checkTeacherOrAdmin,
   upload.single("arquivo"),
   execute(spreadsheets.preview),
 );
@@ -255,7 +256,7 @@ router.get("/alunos/exportacoes", checkAuth, execute(spreadsheets.export));
 router.get("/alunos/:id", checkAuth, execute(professorController.alunoDados));
 router.post(
   "/alunos/:id/redefinicao-senha",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(professorController.gerarSenhaAluno),
 );
 router.get(
@@ -265,25 +266,25 @@ router.get(
 );
 router.delete(
   "/avaliacoes/:id",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(professorController.deletarCompetencia),
 );
 router.delete(
   "/alunos/:id",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(professorController.deleteAluno),
 );
 router.get("/tarefas/:id", checkAuth, execute(tarefaController.obterDetalhes));
-router.patch("/tarefas/:id", checkAuth, execute(tarefaController.editar));
-router.delete("/tarefas/:id", checkAuth, execute(tarefaController.excluir));
+router.patch("/tarefas/:id", checkTeacherOrAdmin, execute(tarefaController.editar));
+router.delete("/tarefas/:id", checkTeacherOrAdmin, execute(tarefaController.excluir));
 router.delete(
   "/calendario/eventos/:id",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(calendarioController.deletarEvento),
 );
 router.delete(
   "/calendario/feriados/:id",
-  checkAuth,
+  checkTeacherOrAdmin,
   execute(calendarioController.deletarFeriado),
 );
 router.post(
@@ -345,19 +346,19 @@ router.post(
 );
 router.post(
   "/ia/professor/mensagens",
-  checkAuth,
+  checkTeacherOrAdmin,
   rateLimit({ windowMs: 60 * 1000, max: 12, keyPrefix: "ai-teacher" }),
   execute(aiController.teacherChat),
 );
 router.post(
   "/ia/alunos/:id/analises",
-  checkAuth,
+  checkTeacherOrAdmin,
   rateLimit({ windowMs: 60 * 1000, max: 20, keyPrefix: "ai-student-analysis" }),
   execute(aiController.analyzeStudent),
 );
 router.post(
   "/ia/avaliacoes",
-  checkAuth,
+  checkTeacherOrAdmin,
   rateLimit({ windowMs: 60 * 1000, max: 20, keyPrefix: "ai-grade-update" }),
   execute(aiController.updateGrade),
 );
