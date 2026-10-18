@@ -1,8 +1,17 @@
 const database = require("../database");
+const annualAttendance = `(
+  SELECT CASE WHEN COUNT(*) = 0 THEN NULL
+    ELSE ROUND(100.0 * COUNT(*) FILTER (WHERE fr.status = 'PRESENTE') / COUNT(*))::INTEGER
+  END
+  FROM frequencia_registros fr
+  WHERE fr.aluno_id = a.id
+    AND fr.data_aula >= date_trunc('year', CURRENT_DATE)::DATE
+    AND fr.data_aula < (date_trunc('year', CURRENT_DATE) + INTERVAL '1 year')::DATE
+)`;
 exports.query = (text, parameters) => database.query(text, parameters);
 exports.connect = () => database.connect();
 exports.dashboardSql1 = (scoped = false) => `
-  SELECT a.*, COALESCE((
+  SELECT a.*, ${annualAttendance} AS presenca_calculada, COALESCE((
       SELECT json_agg(json_build_object('nota', ac.nota))
       FROM aluno_competencias ac
       WHERE ac.aluno_id = a.id), '[]'::json) as competencias
