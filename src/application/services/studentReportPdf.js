@@ -108,6 +108,20 @@ exports.buildStudentReport = ({ student, competencies, attendance, year, yearDay
   const total = Number(attendance.total_aulas || 0);
   const present = Number(attendance.presencas || 0);
   const percent = total ? Math.round((present / total) * 100) : null;
+  const scores = competencies
+    .map((item) => Number(item.nota))
+    .filter((score) => Number.isFinite(score) && score >= 0 && score <= 10);
+  const average = scores.length
+    ? scores.reduce((sum, score) => sum + score, 0) / scores.length
+    : null;
+  const level =
+    average === null
+      ? "SEM AVALIACOES"
+      : average >= 7 && percent !== null && percent >= 75
+        ? "APTO"
+        : average < 5 || (percent !== null && percent < 50)
+          ? "INAPTO"
+          : "EM DESENVOLVIMENTO";
   const lines = [
     "AnalisAI | Relatorio pedagogico individual",
     "Painel de Analise de Desempenho por Competencias",
@@ -115,7 +129,8 @@ exports.buildStudentReport = ({ student, competencies, attendance, year, yearDay
     `Aluno: ${student.nome}`,
     `Turma: ${student.ano_escolar}`,
     `Matricula: ${student.matricula || "Nao informada"}`,
-    `Nivel registrado: ${student.nivel || "Em desenvolvimento"}`,
+    `Nivel calculado: ${level}`,
+    `Media das competencias registradas: ${average === null ? "sem avaliacoes" : average.toFixed(1) + "/10"}`,
     `Ano de referencia: ${year} (${yearDays} dias no calendario)`,
     "",
     "FREQUENCIA",
