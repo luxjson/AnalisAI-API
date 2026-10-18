@@ -223,7 +223,17 @@ async function getBackupStatus() {
   const last = backups[0]?.createdAt ? new Date(backups[0].createdAt) : null;
   const next = last ? new Date(last.getTime() + SEVEN_DAYS_MS) : null;
   const now = Date.now();
+  const externalSnapshotConfigured = Boolean(
+    process.env.NEON_API_KEY &&
+      process.env.NEON_PROJECT_ID &&
+      process.env.NEON_BRANCH_ID,
+  );
   return {
+    enabled: process.env.BACKUP_ENABLED === "true" && !process.env.VERCEL,
+    externalSnapshotConfigured,
+    storageMode: externalSnapshotConfigured
+      ? "neon-snapshot"
+      : "same-database-json",
     lastBackup: last?.toISOString() || null,
     nextBackup: next?.toISOString() || null,
     intervalDays: 7,
@@ -250,6 +260,7 @@ async function getBackupFile(filename) {
 }
 async function checkAndRunScheduledBackup() {
   const status = await getBackupStatus();
+  if (!status.enabled) return null;
   if (
     !status.lastBackup ||
     Date.now() - new Date(status.lastBackup).getTime() >= SEVEN_DAYS_MS
