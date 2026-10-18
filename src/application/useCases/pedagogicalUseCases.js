@@ -202,6 +202,8 @@ exports.getAttendance = async (command, outcome) => {
 };
 
 exports.saveAttendance = async (command, outcome) => {
+  if (!["Professor", "Admin"].includes(command.session.userCargo))
+    return outcome.code(403).data({ error: "Somente professores e administradores podem registrar frequência." });
   const userId = integerId(command.session.userId);
   const turma = command.input?.turma;
   const dataAula = dateOnly(command.input?.data);
@@ -412,20 +414,18 @@ exports.createReportRequest = async (command, outcome) => {
 exports.updateReportRequest = async (command, outcome) => {
   const id = integerId(command.ids.id);
   const userId = integerId(command.session.userId);
+  const cargo = command.session.userCargo;
   const status = command.input?.status;
   const resposta = text(command.input?.resposta || "", 2000) || null;
   if (!id || !userId || !["EM_ANDAMENTO", "CONCLUIDA"].includes(status))
     return outcome.code(400).data({ error: "Atualização de solicitação inválida." });
-  if (!["Professor", "Admin"].includes(command.session.userCargo))
-    return outcome.code(403).data({ error: "Apenas o professor responsável pode atualizar a solicitação." });
-  const result = await repository.query(repository.updateReportRequestSql(), [
-    status,
-    resposta,
-    id,
-    userId,
-  ]);
+  if (!["Professor", "Admin"].includes(cargo))
+    return outcome.code(403).data({ error: "Apenas o professor responsável ou um administrador pode atualizar a solicitação." });
+  const result = cargo === "Admin"
+    ? await repository.query(repository.updateAnyReportRequestSql(), [status, resposta, id])
+    : await repository.query(repository.updateReportRequestSql(), [status, resposta, id, userId]);
   if (!result.rows.length)
-    return outcome.code(404).data({ error: "Solicitação não encontrada para este professor." });
+    return outcome.code(404).data({ error: "Solicitação não encontrada para esta conta." });
   return outcome.data({ sucesso: true, solicitacao: result.rows[0] });
 };
 
