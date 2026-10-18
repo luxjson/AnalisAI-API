@@ -18,6 +18,14 @@ function requestData(command) {
     conversationId,
   };
 }
+async function getAssignedTeacherClasses(command) {
+  if (command.session.userCargo !== "Professor") return null;
+  const result = await repository.query(
+    "SELECT turma FROM professor_turmas WHERE professor_id = $1 ORDER BY turma",
+    [command.session.userId],
+  );
+  return result.rows.map((row) => row.turma);
+}
 function conversationTitle(message) {
   const title = message
     .replace(/\s+/g, " ")
@@ -77,7 +85,7 @@ async function persistExchange(command, conversation, message, answer) {
   await updateConversationTitle(savedConversation.id, message);
   return savedConversation;
 }
-async function detectGradeAction(message) {
+async function detectGradeAction(message, classes = null) {
   const match = message.match(
     /altera(?:r)?\s+(?:a\s+)?nota\s+de\s+(.+?)\s+em\s+(.+?)\s+(?:para|pra)\s+(10(?:[.,]0)?|[0-9](?:[.,][0-9])?)/i,
   );
@@ -91,6 +99,8 @@ async function detectGradeAction(message) {
   const matchedStudent = uniqueRow(student.rows);
   const matchedCompetency = uniqueRow(competency.rows);
   if (!matchedStudent || !matchedCompetency) return null;
+  if (classes !== null && !classes.includes(matchedStudent.ano_escolar))
+    return null;
   return {
     alunoId: matchedStudent.id,
     alunoNome: matchedStudent.nome,
@@ -267,7 +277,8 @@ exports.teacherChat = async (command, outcome) => {
     const history = conversation
       ? await getConversationHistory(conversation.id)
       : [];
-    const gradeAction = await detectGradeAction(message);
+    const classes = await getAssignedTeacherClasses(command);
+    const gradeAction = await detectGradeAction(message, classes);
     if (gradeAction) {
       const answer = `Encontrei a alteração para ${gradeAction.alunoNome}, competência ${gradeAction.competenciaNome} e nota ${gradeAction.nota}. Confirme abaixo para aplicar.`;
       conversation = await persistExchange(
@@ -286,9 +297,13 @@ exports.teacherChat = async (command, outcome) => {
       });
     }
     const [students, competencies, tasks] = await Promise.all([
-      repository.query(repository.teacherChatSql2()),
+      classes === null
+        ? repository.query(repository.teacherChatSql2())
+        : repository.query(repository.teacherChatSql2(true), [classes]),
       repository.query(repository.teacherChatSql3()),
-      repository.query(repository.teacherChatSql4()),
+      classes === null
+        ? repository.query(repository.teacherChatSql4())
+        : repository.query(repository.teacherChatSql4(true), [classes]),
     ]);
     const context = {
       alunos: students.rows,
