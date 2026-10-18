@@ -102,16 +102,17 @@ exports.upsertAttendanceSql = () => `
 `;
 exports.refreshAttendancePercentagesSql = () => `
   UPDATE alunos a
-  SET presenca = COALESCE((
-    SELECT ROUND(
-      100.0 * COUNT(*) FILTER (WHERE fr.status = 'PRESENTE')
-      / NULLIF(COUNT(*), 0)
-    )::INTEGER
+  SET presenca = (
+    SELECT CASE WHEN COUNT(*) = 0 THEN NULL
+      ELSE ROUND(
+        100.0 * COUNT(*) FILTER (WHERE fr.status = 'PRESENTE') / COUNT(*)
+      )::INTEGER
+    END
     FROM frequencia_registros fr
     WHERE fr.aluno_id = a.id
       AND fr.data_aula >= make_date($2::INTEGER, 1, 1)
       AND fr.data_aula < make_date($2::INTEGER + 1, 1, 1)
-  ), 100)
+  )
   WHERE a.id = ANY($1::INTEGER[])
 `;
 exports.studentReportSql = () => `
